@@ -1,2 +1,3 @@
-./.venv
-./venv_health
+/.venv
+/venv_health
+/lightning_logs
