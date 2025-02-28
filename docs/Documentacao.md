@@ -318,3 +318,29 @@
         1 - Vinculada
         
 - NU_LOTE_IA: Transferência vertical da investigação e do acompanhamento [varchar(7)]
+
+
+
+'NU_IDADE_N': IDADE \
+'CS_SEXO': SEXO \
+'CS_GESTANT' : GESTANTE \
+'CS_RACA' : RAÇA \
+'NU_LESOES': Nº de lesões cutâneas \
+'FORMACLINI': Forma clínica inicial por ocasião do diagnóstico, segundo classificação de Madrid \
+'AVALIA_N': Avaliação do Grau de Incapacidade Física no Diagnóstico \
+'CLASSOPERA': Classificação operacional, por ocasião do diagnóstico, para eleição do esquema terapêutico  \
+'BACILOSCOP': resultado da baciloscopia \
+'ESQ_INI_N': Esquema terapêutico instituído por ocasião do diagnostico \
+'CONTREG': Número de pessoas que residam ou tenham residido, nos últimos 5 anos com o doente, a contar da Data do diagnóstico \
+'NERVOSAFET': Número de nervos afetados  \
+'CLASSATUAL': Classificação operacional atual \
+'AVAL_ATU_N': Avaliação de incapacidade física no momento da cura  \
+'ESQ_ATU_N': Esquema terapêutico em uso  \
+'DOSE_RECEB': Número de doses supervisionadas \
+'EPIS_RACIO': Episódio Reacional Durante o Tratamento \
+'CONTEXAM': Número de contatos examinados \
+'TPALTA_N': Tipo de Saída (cura, obito) \
+'IDADE_ANOS': idade em Anos (tratada de 'NU_IDADE_N') \
+'IDADE_MESES': Meses para recem nascidos (tratada 'NU_IDADE_N') \
+'CS_SEXO_CAT': Sexo categorizado (tratada 'CS_SEXO_CAT') \
+'CLASSATUAL_CAT': Classificação operacional atual (tratada 'CLASSATUAL')
