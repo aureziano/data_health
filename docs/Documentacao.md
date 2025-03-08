@@ -46,6 +46,8 @@
 
         1. Feminino
 
+        I - Ignorado
+
 - CS_GESTANT: Código Gestante [varchar2(1)] # Não usar
         1. 1ºTrimestre 
 
@@ -285,6 +287,8 @@
 
         3- Reação tipo 1 e 2
 
+        4- Sem Reação
+
 - DTMUDESQ:  Data de mudança do Esquema [date]
 
 - CONTEXAM: Número de contatos examinados [numeric(2)]
@@ -343,4 +347,21 @@
 'IDADE_ANOS': idade em Anos (tratada de 'NU_IDADE_N') \
 'IDADE_MESES': Meses para recem nascidos (tratada 'NU_IDADE_N') \
 'CS_SEXO_CAT': Sexo categorizado (tratada 'CS_SEXO_CAT') \
-'CLASSATUAL_CAT': Classificação operacional atual (tratada 'CLASSATUAL')
+'CLASSATUAL_CAT': Classificação operacional atual (tratada 'CLASSATUAL') \
+'AVAL_ATU_N_CAT': Avaliação de incapacidade física no momento da cura (tratada 'AVAL_ATU_N') \
+'CS_GESTANT_CAT' : GESTANTE (tratada 'CS_GESTANT') \
+'CS_RACA_CAT': Código Raça (tratada 'CS_RACA') \
+'NU_LESOES_CAT':  Nº de lesões cutâneas (tratada 'NU_LESOES') \
+'FORMACLINI_CAT': Forma clínica inicial por ocasião do diagnóstico, segundo classificação de Madrid (tratada 'FORMACLINI') \
+'AVALIA_N_CAT': Avaliação do Grau de Incapacidade Física no Diagnóstico (tratada 'AVALIA_N') \
+'BACILOSCOP_CAT': Informar o resultado da baciloscopia (tratada 'BACILOSCOP')  \
+'ESQ_INI_N_CAT': Esquema terapêutico instituído por ocasião do diagnostico (tratada 'ESQ_INI_N')  \
+'CONTREG_CAT': Número de pessoas que residam ou tenham residido, nos últimos 5 anos com o doente, a contar da Data do diagnóstico (tratada 'CONTREG') \
+'NERVOSAFET_CAT': Informar o resultado da baciloscopia (tratada 'NERVOSAFET')   \
+'AVAL_ATU_N_CAT': Avaliação de incapacidade física no momento da cura (tratada 'AVAL_ATU_N') \
+'ESQ_ATU_N_CAT': Esquema terapêutico em uso (tratada 'ESQ_ATU_N')    \
+'DOSE_RECEB_CAT': Informar o resultado da baciloscopia (tratada 'DOSE_RECEB')   \
+'EPIS_RACIO_CAT': Episódio Reacional Durante o Tratamento (tratada 'EPIS_RACIO') \
+'CONTEXAM_CAT': Número de contatos examinados (tratada 'CONTEXAM') \
+'TPALTA_N_CAT': Tipo de Saída (tratada 'TPALTA_N')
+
