@@ -1,0 +1,3 @@
+- Sempre responder em portugues
+- Importações no topo do arquivo
+- checar as fontes de dados
