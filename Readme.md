@@ -139,6 +139,15 @@ O notebook [wsus_ml.ipynb](wsus_ml.ipynb) contém implementações de:
 - **Testes Gerais**: [wsus.ipynb](wsus.ipynb)
 - **Análise de Variáveis e Correlações**: [wsus_correlacao.ipynb](wsus_correlacao.ipynb)
 
+### Fonte dos dados
+
+- [Arquivos .dbc](https://datasus.saude.gov.br/transferencia-de-arquivos/):
+
+1. Em fonte : `SINAN - Sistema de Informações de Agravos de Notificação`
+2. Modalidade : `Dados`
+3. Tipo de Arquivo : `HANS - Hanseníase`
+
+
 ## Documentação
 
 - **Documentação do WSUS**: [Documentacao](docs/Documentacao.md)
