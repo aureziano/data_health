@@ -2,3 +2,4 @@ venv_health/
 lightning_logs/
 data/
 modelo/
+*.shp
