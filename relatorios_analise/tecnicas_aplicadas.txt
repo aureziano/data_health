@@ -1,0 +1,6 @@
+Técnicas aplicadas:
+- Ensemble Feature Selection: RFE (Random Forest) e f_classif (univariate)
+- Propensity Score Matching: regressão logística para estimar propensity score
+- Referências:
+  - Ensemble Feature Selection: Saeys et al. (2007), Abeel et al. (2010), Song et al. (2018)
+  - Propensity Score Matching: Rosenbaum & Rubin (1983), Stürmer et al. (2005)
