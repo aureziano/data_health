@@ -17,12 +17,14 @@ except FileNotFoundError:
     exit()
 
 # 2. Seleção de variáveis relevantes (sem variáveis de data/hora)
+# CORREÇÃO: Removido TPALTA_N das features (era usado como target - DATA LEAKAGE)
+# Target correto: AVAL_ATU_N (Grau de Incapacidade Física - G2D)
 variaveis_preditoras = [
     'CLASSOPERA', 'BACILOSCOP', 'ESQ_INI_N', 'CONTREG', 'NERVOSAFET', 'ESQ_ATU_N',
-    'DOSE_RECEB', 'CONTEXAM', 'TPALTA_N', 'CS_SEXO', 'CS_RACA', 'CS_ESCOL_N',
+    'DOSE_RECEB', 'CONTEXAM', 'CS_SEXO', 'CS_RACA', 'CS_ESCOL_N',
     'NU_ANO'
 ]
-variaveis_alvo = ['TPALTA_N']
+variaveis_alvo = ['AVAL_ATU_N']  # Grau de Incapacidade Física (G2D)
 
 # 3. Remover linhas com missing no alvo
 df = df.dropna(subset=variaveis_alvo + variaveis_preditoras)

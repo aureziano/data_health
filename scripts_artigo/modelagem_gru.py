@@ -1,5 +1,8 @@
 import os
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+import sys, os as _os
+sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), '..'))
+import config
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt

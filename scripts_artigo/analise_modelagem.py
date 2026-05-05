@@ -8,6 +8,9 @@ from sklearn.linear_model import LogisticRegression, LassoCV
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import classification_report
 import os
+import sys
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+import config
 
 # Configurações gerais
 dir_analise = "./analise"
@@ -26,7 +29,7 @@ df_y = pd.read_csv("./tratamento/alvo_tratado.csv")
 print("Dados tratados carregados com sucesso.")
 
 # 2. Carregamento dos dados brutos para obter colunas de data/hora
-caminho_arquivo = rstr(config.PATHS['hanceniase'])
+caminho_arquivo = str(config.PATHS['hanceniase'])
 try:
     df_bruto = pd.read_csv(caminho_arquivo, encoding="utf-8", low_memory=False)
     print("Dados brutos carregados com sucesso.")
@@ -35,12 +38,14 @@ except FileNotFoundError:
     exit()
 
 # 3. Seleção de variáveis relevantes
+# CORREÇÃO: Removido TPALTA_N das features (DATA LEAKAGE)
+# Target correto: AVAL_ATU_N (Grau de Incapacidade Física - G2D)
 variaveis_preditoras = [
     'CLASSOPERA', 'BACILOSCOP', 'ESQ_INI_N', 'CONTREG', 'NERVOSAFET', 'ESQ_ATU_N',
-    'DOSE_RECEB', 'CONTEXAM', 'TPALTA_N', 'CS_SEXO', 'CS_RACA', 'CS_ESCOL_N',
+    'DOSE_RECEB', 'CONTEXAM', 'CS_SEXO', 'CS_RACA', 'CS_ESCOL_N',
     'NU_ANO'
 ]
-variaveis_alvo = ['TPALTA_N']
+variaveis_alvo = ['AVAL_ATU_N']  # Grau de Incapacidade Física (G2D)
 
 # 4. Remover linhas com missing no alvo
 df_bruto = df_bruto.dropna(subset=variaveis_alvo + variaveis_preditoras)
