@@ -1,0 +1,331 @@
+
+\documentclass[
+12pt, % The default document font size, options: 10pt, 11pt, 12pt
+oneside, % Two side (alternating margins) for binding by default, uncomment to switch to one side
+english, % ngerman for German
+onehalfspacing,%singlespacing, % Single line spacing, alternatives: onehalfspacing or doublespacing
+%draft, % Uncomment to enable draft mode (no pictures, no links, overfull hboxes indicated)
+%nolistspacing, % If the document is onehalfspacing or doublespacing, uncomment this to set spacing in lists to single
+liststotoc, % Uncomment to add the list of figures/tables/etc to the table of contents
+%toctotoc, % Uncomment to add the main table of contents to the table of contents
+parskip, % Uncomment to add space between paragraphs
+%nohyperref, % Uncomment to not load the hyperref package
+headsepline, % Uncomment to get a line under the header
+%chapterinoneline, % Uncomment to place the chapter title next to the number on one line
+%consistentlayout, % Uncomment to change the layout of the declaration, abstract and acknowledgements pages to match the default layout
+]{MastersDoctoralThesis} % The class file specifying the document structure
+
+\usepackage{lipsum}
+
+\usepackage[utf8]{inputenc} % Required for inputting international characters
+\usepackage[T1]{fontenc} % Output font encoding for international characters
+
+\usepackage{amsmath}
+\usepackage{palatino} % Use the Palatino font by default
+%\usepackage{cite}
+%\usepackage{subfiles}
+%\usepackage{xr}
+\usepackage{slashbox}
+\usepackage{booktabs}
+\usepackage{subcaption}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,positioning}
+%\usepackage{gensymb}
+
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{esvect}
+\usepackage{url}
+\usepackage{setspace}
+\usepackage{float}
+\usepackage{placeins}
+
+\usepackage{titlesec}
+\usepackage{csquotes}
+
+\usepackage{caption}
+\usepackage{subcaption}
+
+\usepackage{makecell}
+
+\usepackage{svg}
+\usepackage{algpseudocode}
+
+\usepackage{multirow}
+\usepackage{rotating}
+\usepackage{longtable}
+\usepackage{microtype}
+\usepackage{pdfpages}
+\usepackage{geometry}
+\usepackage{hyperref}
+
+
+\setcounter{secnumdepth}{4}
+
+% Pacote de referências adaptado para o formato do usuário
+\usepackage[backend=biber,style=ieee,sorting=none,citestyle=numeric-comp]{biblatex} 
+\addbibresource{referencias_dis.bib} % The filename of the bibliography
+
+%----------------------------------------------------------------------------------------
+%   MARGIN SETTINGS
+%----------------------------------------------------------------------------------------
+\geometry{
+    paper=a4paper,
+    inner=2cm,
+    outer=3cm,
+    bindingoffset=.5cm,
+    top=3cm,
+    bottom=2cm,
+}
+
+%----------------------------------------------------------------------------------------
+%   THESIS INFORMATION
+%----------------------------------------------------------------------------------------
+\thesistitle{Aprendizado de Máquina na Vigilância de Precisão da Hanseníase no Brasil: Modelagem de Subnotificação Pandêmica, Reabsorção de Backlog e Explicabilidade SHAP}
+\supervisor{Prof. Dr. Anselmo Frizera\\ Prof. Dr. Coor}
+
+\degree{Mestre em Informática} 
+\author{Aureziano Faria de Oliveira} 
+\addresses{} 
+
+\subject{Epidemiologia e Aprendizado de Máquina}
+\keywords{Hanseníase, Pandemia, COVID-19, Incapacidade Física, Machine Learning, Vigilância em Saúde, Vigilância de Precisão, Séries Temporais}
+\university{\href{http://www.ufes.br/}{Federal University of Esp\'{i}rito Santo}} 
+\department{\href{https://informatica.ufes.br/pt-br/pos-graduacao/PPGI}{Graduate Program in ..}} 
+\group{Human Center Systems} 
+\faculty{\href{http://faculty.university.com}{Federal University of Esp\'{i}rito Santo (UFES)}}
+
+
+\AtBeginDocument{
+\hypersetup{pdftitle=\ttitle}
+\hypersetup{pdfauthor=\authorname}
+\hypersetup{pdfkeywords=\keywordnames}
+}
+
+\begin{document}
+\sloppy
+
+\pagestyle{empty}
+
+%----------------------------------------------------------------------------------------
+%   TITLE PAGE
+%----------------------------------------------------------------------------------------
+\begin{titlepage}
+\begin{center}
+
+%\vspace*{.06\textheight}
+{\scshape\LARGE \univname\par}\vspace{0.2cm} % University name
+\textsc{\large Technological Center}\\[0.4cm] % Where
+\textsc{\large Graduate Program In }\\ [4cm] % Curse
+
+
+\textsc{\large Aureziano Faria de Oliveira} \\
+
+
+\vspace*{\fill}
+
+\textsc{\large Master Dissertation} \\ [0.4cm]
+
+\HRule \\[0.2cm] % Horizontal line
+{\LARGE \bfseries \ttitle\par}\vspace{0.4cm} % Thesis title
+\HRule \\[1cm] % Horizontal line
+ 
+\vspace*{\fill}
+
+
+
+\textsc{\large Vit\'{o}ria, Brazil} \\
+\textsc{\large April 2026} 
+
+%\includegraphics[width=0.5\textwidth]{Ufes} % University/department logo - uncomment to place it
+ 
+%\vfill
+\end{center}
+\end{titlepage}
+
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\begin{titlepage}
+\begin{center}
+
+\vspace*{.06\textheight}
+{\scshape\LARGE \univname\par}\vspace{0.8cm} % University name
+\textsc{\Large Master Dissertation}\\[0.4cm] % Thesis type
+
+\HRule \\[0.2cm] % Horizontal line
+{\huge \bfseries \ttitle\par}\vspace{0.4cm} % Thesis title
+\HRule \\[0.5cm] % Horizontal line
+ 
+\begin{minipage}[t]{0.4\textwidth}
+\begin{flushleft} \normalsize
+\emph{Author:}\\
+%\authorname
+\href{http://lattes.cnpq.br/4989902091912735}{\authorname} % Author name - remove the \href bracket to remove the link
+\end{flushleft}
+\end{minipage}
+\begin{minipage}[t]{0.4\textwidth}
+\begin{flushright} \normalsize
+\emph{Advisor:} \\
+\href{http://lattes.cnpq.br/8928890008799265}{Prof. Dr. Anselmo Frizera Neto} \\
+%\emph{Co-Advisor:} \\
+%\href{}{} \\
+% Supervisor name - remove the \href bracket to remove the link  
+%\href{http://www.jamessmith.com}{
+%\supname
+\end{flushright}
+\end{minipage}
+%\begin{minipage}[t]{0.4\textwidth}
+%\begin{flushright} \large
+%\href{http://www.jamessmith.com}{\supname} % Supervisor name - remove the \href bracket to remove the link  
+%\end{flushright}
+%\end{minipage}
+\\[0.8 cm]
+
+
+\normalsize \textit{A Master Dissertation submitted in fulfillment of the requirements\\ for the degree of \degreename}\\[0.15cm] % University requirement text
+\textit{in the}\\[0.2cm]
+\deptname\\[1cm] % Research group name and department name
+ 
+
+%{\normalsize \today}\\[0.5cm] % Date
+Vit\'{o}ria, Brazil\\
+April 2026
+%\includegraphics[width=0.5\textwidth]{Ufes} % University/department logo - uncomment to place it
+ 
+%\vfill
+\end{center}
+\end{titlepage}
+
+\newpage
+%%\includepdf[pages=1]{ficha.pdf}
+\newpage
+
+\newpage
+%%\includepdf[pages=1]{assinatura.pdf}
+\newpage
+%\cleardoublepage
+
+\begin{titlepage}
+\begin{center}
+
+\textsc{\normalsize Aureziano Faria de Oliveira}\\[0.1cm]
+
+{\Large \bfseries \ttitle\par}\vspace{0.1cm} % Thesis title
+ 
+\textit{Masters Dissertation presented to the Graduate Program in Informatics of the Federal University of Esp\'{i}rito Santo, as a partial requirement for the degree of Master in Informatics.} 
+
+\vspace{0.1cm}
+
+\begin{minipage}[t]{0.4\textwidth}
+\begin{flushleft} \normalsize
+\end{flushleft}
+\end{minipage}
+\begin{minipage}[t]{0.4\textwidth}
+\begin{flushright} \normalsize
+Approved on August 07, 2025 \\
+% Supervisor name - remove the \href bracket to remove the link  
+% \href{http://www.jamessmith.com}
+% \supname
+\end{flushright}
+\end{minipage}
+
+\vspace{0.3cm}
+
+\begin{minipage}[t]{\textwidth}
+\begin{center}
+
+\normalsize 
+\singlespace
+
+\vspace{0.1cm}
+% Asinaturas
+\HRule \\
+Prof. Dr. Anselmo Frizera Neto -- Advisor\\
+Universidade Federal do Espírito Santo\\
+\vspace{1.1cm}
+
+% \HRule \\
+% Prof.  -- Co-Advisor\\
+% Universidade Federal do Espírito Santo\\
+% \vspace{1.1cm}
+
+% \HRule \\
+% Prof. Dr. Eduardo Rocon de Lima\\
+% Universidad Politécnica de Madrid/CSIC\\
+% \vspace{1.1cm}
+
+% \HRule \\
+% Prof. Dr. Pablo Javier Alsina\\
+% Universidade Federal do Rio Grande do Norte\\
+% \vspace{1.1cm}
+
+
+
+
+\end{center}
+\end{minipage}
+ 
+
+\end{center}
+\end{titlepage}
+
+
+\frontmatter
+
+%----------------------------------------------------------------------------------------
+%   ABSTRACT / RESUMO
+%----------------------------------------------------------------------------------------
+\begin{abstract}
+\addchaptertocentry{Abstract} 
+The COVID-19 pandemic significantly disrupted leprosy surveillance in Brazil, masking its real epidemiological burden. This dissertation proposes a precision surveillance framework using Machine Learning (ML) to quantify subnotifiction and predict Grade 2 Disability (G2D) risk. Using a multimodel comparison (SARIMA, Prophet, XGBoost) with walk-forward validation, we identified a 33.56\% detection gap between 2020-2022 and evidence of backlog absorption in 2023. Predictive modeling (LightGBM + SMOTE) achieved high discriminatory power, with SHAP waterfall plots identifying treatment adherence and clinical classification as primary risk drivers. UMAP-based clustering yielded two distinct phenotypes ($K=2$, Silhouette 0.69) representing "Opportune Diagnosis" and "Delayed Diagnosis/High Vulnerability". These results emphasize the role of Machine Learning in managing the post-pandemic leprosy backlog and enhancing public health decision-making.
+
+\textbf{Keywords:} Leprosy, Precision Surveillance, Machine Learning, COVID-19, Underreporting, Explainability.
+\end{abstract}
+
+\begin{resumo}
+\addchaptertocentry{Resumo} 
+A pandemia de COVID-19 desestruturou a vigilância da hanseníase no Brasil, mascarando sua real carga epidemiológica. Esta dissertação propõe uma estrutura de vigilância de precisão utilizando Aprendizado de Máquina (ML) para quantificar a subnotificação e prever o risco de Grau 2 de Incapacidade (GIF/G2D). Utilizando um comparativo multimodelo (SARIMA, Prophet, XGBoost) com validação walk-forward, identificamos um gap de detecção de 33,56\% entre 2020-2022 e evidências de reabsorção de demanda reprimida (backlog) em 2023. A modelagem preditiva (LightGBM + SMOTE) alcançou alto poder discriminatório, com SHAP waterfall plots identificando a adesão ao tratamento e a classificação operacional como os principais direcionadores de risco. A clusterização via UMAP revelou dois fenótipos distintos ($K=2$, Silhueta 0.69), representando "Diagnóstico Oportuno" e "Diagnóstico Tardio/Alta Vulnerabilidade". Os resultados enfatizam o papel do Aprendizado de Máquina na gestão da demanda reprimida pós-pandemia e no aprimoramento da tomada de decisão em saúde pública.
+
+\textbf{Palavras-chave:} Hanseníase, Vigilância de Precisão, Aprendizado de Máquina, COVID-19, Subnotificação, Explicabilidade.
+\end{resumo}
+
+%----------------------------------------------------------------------------------------
+%   LISTS
+%----------------------------------------------------------------------------------------
+\tableofcontents
+\listoffigures
+\listoftables
+
+\mainmatter
+\pagestyle{thesis}
+
+%----------------------------------------------------------------------------------------
+%   THESIS CONTENT - CHAPTERS
+%----------------------------------------------------------------------------------------
+\include{Chapters/Chapter1}
+\include{Chapters/Chapter2}
+\include{Chapters/Chapter3}
+\include{Chapters/Chapter4} 
+\include{Chapters/Chapter5} 
+\include{Chapters/Chapter6} 
+
+%----------------------------------------------------------------------------------------
+%   APPENDICES
+%----------------------------------------------------------------------------------------
+
+\appendix % Cue to tell LaTeX that the following "chapters" are Appendices
+
+\include{apendice/apendice_incapacidade}
+\include{apendice/apendice_metodologia}
+\include{apendice/apendice_series_temporais}
+
+%----------------------------------------------------------------------------------------
+%   BIBLIOGRAPHY
+%----------------------------------------------------------------------------------------
+\printbibliography[heading=bibintoc]
+
+\end{document}

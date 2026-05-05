@@ -1,0 +1,50 @@
+% Tabela de Métricas Descritivas
+\begin{table}
+\caption{Métricas Estatísticas das Variáveis Analisadas}
+\label{tab:metricas_vars}
+\begin{tabular}{lllllr}
+\toprule
+Variável & Média & Mediana & Moda & Desvio Padrão & Missing % \\
+\midrule
+CLASSOPERA & 1.695358 & 2.000000 & 2.000000 & 0.465522 & 0.000000 \\
+BACILOSCOP & 2.257885 & 2.000000 & 2.000000 & 1.316256 & 0.000000 \\
+ESQ_INI_N & 1.710054 & 2.000000 & 2.000000 & 0.483635 & 0.000000 \\
+CONTREG & 3.401363 & 3.000000 & 3.000000 & 3.236343 & 0.000000 \\
+NERVOSAFET & 1.317084 & 0.000000 & 0.000000 & 2.208488 & 0.000000 \\
+DOSE_RECEB & 9.613500 & 12.000000 & 12.000000 & 4.379744 & 0.000000 \\
+CONTEXAM & 2.842345 & 2.000000 & 2.000000 & 3.116683 & 0.000000 \\
+CS_SEXO & N/A & N/A & M & N/A & 0.000000 \\
+CS_RACA & 3.000100 & 4.000000 & 4.000000 & 1.622966 & 0.000000 \\
+CS_ESCOL_N & N/A & N/A & 01 & N/A & 0.000000 \\
+NU_ANO & 2013.281524 & 2013.000000 & 2011 & 3.952720 & 0.000000 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+% Tabela de Importância (Mutual Information)
+\begin{table}
+\caption{Ranking de Importância de Atributos (Mutual Information)}
+\label{tab:importancia_mi}
+\begin{tabular}{lr}
+\toprule
+Feature & Mutual_Info \\
+\midrule
+DOSE_RECEB & 0.247857 \\
+CONTEXAM & 0.013730 \\
+ESQ_INI_N & 0.012886 \\
+CLASSOPERA & 0.009549 \\
+NU_ANO & 0.008612 \\
+CS_SEXO_M & 0.007381 \\
+BACILOSCOP & 0.007181 \\
+CS_RACA & 0.005118 \\
+CONTREG & 0.003612 \\
+NERVOSAFET & 0.003593 \\
+CS_SEXO_I & 0.002763 \\
+CS_ESCOL_N_2 & 0.002541 \\
+CS_ESCOL_N_01 & 0.002046 \\
+CS_ESCOL_N_03 & 0.002031 \\
+CS_ESCOL_N_02 & 0.001757 \\
+\bottomrule
+\end{tabular}
+\end{table}

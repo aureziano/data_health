@@ -1,0 +1,38 @@
+\chapter{Conclusão e Trabalhos Futuros}
+
+
+A integração de técnicas de \textit{Machine Learning}, redução de dimensionalidade e análise de séries temporais permitiu uma visão profunda e quantitativa dos desafios da Hanseníase no Brasil, especialmente sob o efeito perturbador da pandemia de COVID-19. Esta dissertação demonstrou que a vigilância epidemiológica tradicional, embora robusta em períodos de estabilidade, carece de resiliência e precisão diante de choques sistêmicos globais \cite{sousa2024predicting, frade2022hidden}.
+
+\section{Síntese dos Principais Achados}
+
+Nossa investigação revelou três pilares fundamentais sobre o estado atual da hanseníase:
+\begin{enumerate}
+    \item \textbf{A Fragilidade da Detecção Precoce:} A análise de clusters demonstrou a existência de um contingente expressivo de pacientes que ingressam no sistema já com danos neurológicos severos (G2D). O isolamento deste grupo em nossas projeções UMAP confirma que o sistema de saúde brasileiro está atuando de forma reativa, falhando em diagnosticar casos paucibacilares iniciais em territórios de alta densidade demográfica \cite{boletim2025hanseniase, who_hans_2021}.
+    \item \textbf{O Abismo da Subnotificação:} A modelagem preditiva baseada em séries temporais (ARIMA e GRU) quantificou matematicamente o " \textit{gap} pandêmico". A divergência entre o esperado e o observado em 2020-2022 não indica uma redução da incidência, mas sim uma interrupção da vigilância ativa. Estimamos que o Brasil deixou de notificar entre 46.000 e 56.000 casos durante o auge da crise sanitária \cite{sousa2025, impact_minas_2025}.
+    \item \textbf{IA como Ferramenta de Justiça Social:} A aplicação de algoritmos explicáveis (SHAP) revelou que a vulnerabilidade clínica está intimamente ligada à baixa escolaridade e à descontinuidade terapêutica. A inteligência artificial, portanto, atua como um "holofote" sobre as iniquidades em saúde, permitindo que o gestor atue cirurgicamente nas causas raízes da incapacidade física \cite{freitas2025evaluating, clinical_variables_northeast}.
+\end{enumerate}
+
+\section{Recomendações para Políticas Públicas}
+
+Com base nas evidências geradas, propomos as seguintes diretrizes para o fortalecimento do Programa Nacional de Controle da Hanseníase, em consonância com a Estratégia "Zero Hanseníase" (2021-2030) \cite{who_hans_2021}:
+\begin{itemize}
+    \item \textbf{Monitoramento de Casos Sentinelas via IA:} A implementação de modelos de risco (como o LightGBM aqui validado) nas interfaces de prontuário eletrônico da APS, emitindo alertas imediatos para pacientes com perfil de alta probabilidade de desenvolvimento de G2D.
+    \item \textbf{Recuperação Ativa da Demanda Reprimida:} Utilização dos mapas de risco gerados pela clusterização otimizada para direcionar mutirões de busca ativa nos municípios identificados com as maiores lacunas de notificação.
+    \item \textbf{Monitoramento Pós-Alta e Reabilitação:} Instituir a obrigatoriedade da avaliação de incapacidade física na alta e utilizar algoritmos para identificar pacientes com risco persistente de neurite tardia \cite{disability_progression_survival}.
+\end{itemize}
+
+\section{Limitações e Trabalhos Futuros}
+
+Embora este estudo utilize um dos maiores volumes de dados do mundo sobre hanseníase, três limitações principais merecem destaque explícito:
+
+\textbf{(1) Queda crítica da completude do GIF no SINAN.} A deterioração da completude da avaliação de incapacidade física na alta — de aproximadamente 84\% (2001-2010) para menos de 41\% (2021-2024), conforme o Apêndice \ref{Appendix:Incapacidade_SocioClinica} — representa uma ameaça à \textbf{validade externa} dos modelos. Pacientes com maior carga de doença tendem a ter seus registros mais completos porque demandam mais atendimentos, gerando um \textit{viés de sobrevivência} nos dados recentes: o modelo pode estar sistematicamente subestimando o risco na população subnotificada e invisibilizada. Esta limitação deve ser considerada ao generalizar as predições para o planejamento 2025-2030.
+
+\textbf{(2) Generalização geográfica.} Os modelos foram treinados com a totalidade do território brasileiro, que apresenta heterogeneidade extrema de endemicidade, acesso a serviços e perfil sociodemográfico. A aplicação direta dos modelos a municípios específicos — particularmente em regiões de baixa endemicidade — pode produzir predições menos calibradas. Pesquisas futuras devem investigar o desempenho dos modelos em validação geográfica cruzada (treinar em uma região e testar em outra) para verificar a transferência de conhecimento.
+
+\textbf{(3) Qualidade estrutural do SINAN.} A natureza da dados administrativos implica variáveis com significativas proporções de dados ausentes, erros de preenchimento e codificações inconsistentes entre serviços. Futuras pesquisas devem focar na integração de dados de mobilidade humana e variáveis climáticas para refinar as previsões de séries temporais, bem como na comparação de modelos de \textit{Deep Learning} baseados em imagens de lesões integrados aos dados tabulares.
+
+\subsection{Proposta de Dashboard de Vigilância em Tempo Real}
+
+Como extensão prática do \textit{framework} desenvolvido, propõe-se sua materialização em um sistema de vigilância de \textbf{malha fechada em tempo real}, composto por: (i) pipelines automatizados de ingestião do SINAN via API DATASUS; (ii) re-treinamento mensal dos modelos com janelas deslizantes \textit{(walk-forward)}; (iii) alertas geoespaciais para municípios que ultrapassem limiares de risco configurados pelos gestores estaduais. Arquiteturas orientadas a eventos (e.g., Apache Kafka para ingestião de fluxo + modelo servido via REST API containerizada) permitiriam que secretarias municipais de saúde recebessem alertas em menos de 48 horas após o encerramento de cada mês epidemiológico — transformando a pesquisa acadêmica em inteligência operacional contínua para o Programa Nacional de Controle da Hanseníase.
+
+Em suma, o caminho para um "Brasil sem Hanseníase" exige a coragem de olhar para os dados ocultos pela pandemia e a inteligência de utilizar a tecnologia para enxergar aqueles que a vigilância tradicional deixou para trás.

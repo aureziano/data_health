@@ -1,0 +1,37 @@
+% Tabela de Hiperparâmetros Otimizados
+\begin{table}
+\caption{Melhores Hiperparâmetros encontrados (LightGBM)}
+\label{tab:params_lgbm}
+\begin{tabular}{rrr}
+\toprule
+num_leaves & n_estimators & learning_rate \\
+\midrule
+64 & 100 & 0.050000 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+% Tabela de Métricas de Avaliação
+\begin{table}
+\caption{Métricas de Avaliação do Modelo Otimizado}
+\label{tab:metricas_lgbm}
+\begin{tabular}{lrrrr}
+\toprule
+ & precision & recall & f1-score & support \\
+\midrule
+1 & 0.999568 & 0.999868 & 0.999718 & 53181.000000 \\
+2 & 1.000000 & 1.000000 & 1.000000 & 785.000000 \\
+3 & 1.000000 & 1.000000 & 1.000000 & 1874.000000 \\
+4 & 1.000000 & 1.000000 & 1.000000 & 1135.000000 \\
+5 & 0.000000 & 0.000000 & 0.000000 & 21.000000 \\
+6 & 1.000000 & 1.000000 & 1.000000 & 857.000000 \\
+7 & 1.000000 & 0.999396 & 0.999698 & 3313.000000 \\
+8 & 1.000000 & 1.000000 & 1.000000 & 778.000000 \\
+9 & 0.000000 & 0.000000 & 0.000000 & 2.000000 \\
+accuracy & 0.999483 & 0.999483 & 0.999483 & 0.999483 \\
+macro avg & 0.777730 & 0.777696 & 0.777713 & 61946.000000 \\
+weighted avg & 0.999258 & 0.999483 & 0.999370 & 61946.000000 \\
+\bottomrule
+\end{tabular}
+\end{table}

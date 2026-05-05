@@ -1,0 +1,133 @@
+\documentclass[preprint,12pt]{elsarticle}
+
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{graphicx}
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
+\usepackage{natbib}
+\usepackage{enumitem}
+\usepackage{xcolor}
+
+\journal{Computational Statistics \& Data Analysis}
+
+\begin{document}
+
+\begin{frontmatter}
+
+\title{Uma Abordagem Híbrida para Modelagem da Hanseníase: Combinando Análise de Redes, Séries Temporais Históricas e Machine Learning}
+
+\author[inst1,inst2]{[Autores]} % Substituir pelos nomes reais
+
+\affiliation[inst1]{organization={Human Centered Systems Laboratory (HCS), Departamento de Informática, Universidade Federal do Espirito Santo (UFES)},
+             city={Vitória},
+             postcode={29.090-090},
+             state={Espirito Santo},
+             country={Brasil}}
+
+
+\begin{abstract}
+A detecção e previsão da dispersão de patógenos são cruciais para a prevenção da transmissão generalizada de doenças, sendo a mobilidade humana um fator fundamental nesse processo. No Brasil, a hanseníase, uma doença infecciosa crônica ainda endêmica, representa um significativo desafio de saúde pública. Este artigo propõe e implementa uma abordagem de modelagem e predição espaço-temporal para a incidência da hanseníase, integrando dados de mobilidade humana com fatores demográficos. Utilizando uma representação baseada em grafos da rede de mobilidade intermunicipal do Brasil — construída a partir de dados de transporte aéreo e rodoviário — identificamos municípios estratégicos para vigilância através de métricas de centralidade. Subsequentemente, desenvolvemos modelos de aprendizado de máquina, incluindo \textbf{Random Forest} e \textbf{Gated Recurrent Units (GRUs)}, para prever a incidência da doença com base em seu histórico e na estrutura da rede de mobilidade. \textbf{Nossos resultados demonstram que, embora a mobilidade não apresente correlação linear direta com as taxas de incidência da hanseníase, sua inclusão como variável em modelos preditivos é relevante. O modelo Random Forest alcançou um Coeficiente de Determinação (R²) de 0.865, com a média móvel de casos dos anos anteriores sendo o principal preditor (87\% de importância).} O framework foi validado comparando a rede de mobilidade com a dispersão inicial da COVID-19 no Brasil, confirmando a relevância epidemiológica do modelo. Esta abordagem permite a identificação de "cidades-portal" e fornece uma ferramenta quantitativa para otimizar a vigilância em saúde.
+\end{abstract}
+
+\begin{keyword}
+Hanseníase \sep Mobilidade Humana \sep Modelagem Espaço-Temporal \sep Aprendizado de Máquina \sep Vigilância em Saúde \sep Big Data
+\end{keyword}
+
+\end{frontmatter}
+
+\section{Introdução}
+A hanseníase é uma doença infecciosa crônica, causada pelo \textit{Mycobacterium leprae}, que, apesar de curável, permanece endêmica em diversas regiões do mundo, sendo o Brasil um dos países com maior número de casos \cite{inovacao2024computacional, ministerio2022protocolo, leprae2022causada}. Sua transmissão ocorre principalmente por contato próximo e prolongado com indivíduos não tratados, através das vias aéreas superiores \cite{inovacao2024modelagem, bacilo2022principal}. Historicamente, a disseminação da hanseníase esteve intrinsecamente ligada à migração de pessoas por rotas comerciais e ao colonialismo \cite{inovacao2024modelagem, roberts2018bioarchaeology, ministerio2022protocolo}. Consequentemente, a compreensão dos padrões de \textbf{mobilidade humana} é fundamental para detectar e prever a dispersão de agentes infecciosos \cite{oliveira2024summary, inovacao2024modelagem, lima2022climate, saldanha2021resumo}.
+
+A detecção precoce da hanseníase e o tratamento oportuno são essenciais para prevenir incapacidades físicas irreversíveis e quebrar a cadeia de transmissão \cite{inovacao2024analise, hanseniase2022objetivos, saude2022equipes}. Casos detectados em menores de 15 anos de idade são considerados um indicador de transmissão ativa e recente na comunidade \cite{inovacao2024analise, hanseniase2022objetivos, crianca2022gravidade}, o que ressalta a importância de estratégias de vigilância aprimoradas. Em 2019, o Brasil notificou 1.545 casos novos em menores de 15 anos \cite{boletim2021epidemiologico}.
+
+Este artigo propõe uma abordagem inovadora para informar a seleção de locais de amostragem em uma rede sentinela avançada, com foco na hanseníase, e para rastrear as rotas mais prováveis de disseminação \cite{oliveira2024summary}. Para isso, integramos uma vasta gama de dados de mobilidade intermunicipal do Brasil com métodos computacionais avançados. A aplicação de \textbf{big data} e \textbf{aprendizado de máquina (Machine Learning - ML)} oferece um novo ferramental para análise, monitoramento e predição de eventos de saúde-doença e para o estudo de seus determinantes \cite{inovacao2024computacional, mooney2018big, saldanha2021resumo, saldanha2021ambito}.
+
+\section{Revisão da Literatura}
+A mobilidade humana tem sido consistentemente reconhecida como um fator chave na transmissão de doenças infecciosas \cite{oliveira2024summary, inovacao2024modelagem, lima2022climate, lima2022dynamics, tang2021fields}. Estudos anteriores demonstraram como as redes de transporte influenciam a propagação de epidemias, como a SARS-CoV-2 \cite{oliveira2024summary, inovacao2024modelagem, silva2022machine} e arboviroses \cite{inovacao2024modelagem, lima2022temporal, lima2022climate}.
+
+Sistemas de vigilância epidemiológica, como a rede sentinela para doenças semelhantes à influenza no Brasil, são cruciais para monitorar a saúde da população \cite{oliveira2024findings, oliveira2024ranking}. No entanto, a otimização desses sistemas é um desafio contínuo, e poucos estudos incorporaram explicitamente padrões de mobilidade na sua concepção \cite{oliveira2024genetic, oliveira2024improvements}.
+
+O advento do \textbf{big data} e do \textbf{aprendizado de máquina (ML)} tem transformado a pesquisa em saúde pública \cite{inovacao2024computacional, mooney2018big, saldanha2021resumo, saldanha2021inovacao}. Técnicas de ML, como \textbf{Redes Neurais Recorrentes (RNNs)} e \textbf{Gated Recurrent Units (GRUs)}, têm se mostrado particularmente eficazes para lidar com dados de séries temporais em contextos de saúde \cite{inovacao2024modelagem, shahidi2024exploring, shahidi2024conclusion, morid2023time, silva2022machine, madden2024deep}.
+
+A hanseníase, embora com um período de incubação longo (em média cinco anos) \cite{bacilo2022principal, scollard2016pathogenesis} e dinâmica de transmissão distinta, compartilha com outras doenças infecciosas a sensibilidade aos padrões de movimentação humana. Portanto, a aplicação de modelos espaço-temporais baseados em mobilidade pode oferecer um meio poderoso para identificar áreas de maior risco \cite{inovacao2024analise}.
+
+\section{Metodologia}
+
+Neste estudo, desenvolvemos e validamos um framework computacional para analisar a relação entre a mobilidade humana e a disseminação da hanseníase no Brasil. A metodologia foi dividida em três etapas principais: (1) coleta, limpeza e harmonização de múltiplos datasets; (2) construção e análise de uma rede de mobilidade nacional; e (3) desenvolvimento de modelos preditivos de aprendizado de máquina.
+
+\subsection{Fontes de Dados e Pré-processamento}
+Foram utilizados dados de diversas fontes públicas. **A sobreposição temporal completa entre os principais datasets de série temporal foi identificada para o período de 2019 a 2022.** Todas as fontes de dados foram pré-processadas para garantir a consistência, sendo o desafio principal a **harmonização dos códigos de município do IBGE, que em fontes de saúde (SINAN) apareciam com 6 dígitos e em fontes de mobilidade e demografia com 7 dígitos. Adotou-se o padrão de 6 dígitos para todas as análises, removendo o dígito verificador dos códigos de 7 dígitos através de divisão inteira.**
+
+\begin{itemize}[label=\textbullet]
+    \item \textbf{Dados de Mobilidade Humana}: Foram consolidados dados anuais de fluxo de passageiros de transporte aéreo (Agência Nacional de Aviação Civil - ANAC) e rodoviário intermunicipal (Agência Nacional de Transportes Terrestres - ANTT). Adicionalmente, dados estruturais sobre conexões rodoviárias e hidroviárias de 2016 (Instituto Brasileiro de Geografia e Estatística - IBGE) foram incorporados para o ano correspondente, quando aplicável.
+    \item \textbf{Dados Epidemiológicos e Demográficos}: Utilizou-se a série histórica de notificações de hanseníase do Sistema de Informação de Agravos de Notificação (SINAN), de 2001 a 2024, e as estimativas anuais de população por município do IBGE.
+\end{itemize}
+
+\subsection{Construção e Análise da Rede de Mobilidade}
+A rede de mobilidade do Brasil foi construída como um grafo direcionado e ponderado $G=(V, E)$, onde cada nó $v \in V$ representa um município (identificado pelo código IBGE de 6 dígitos) e cada aresta $e \in E$ representa uma conexão de transporte. O peso da aresta, $w(e)$, corresponde ao fluxo total de passageiros em um determinado ano.
+
+Para identificar os municípios mais importantes na rede, em vez de aplicar o algoritmo \texttt{Ford-Fulkerson} (adequado para problemas de fluxo máximo entre dois pontos específicos), optamos por métricas de centralidade que avaliam a importância de um nó em relação a toda a rede:
+\begin{itemize}[label=\textbullet]
+    \item \textbf{Centralidade de Grau Ponderado (Degree Centrality)}: Mede o volume total de passageiros que chegam ou saem de um município, identificando os principais "hubs" de mobilidade.
+    \item \textbf{Centralidade de Intermediação (Betweenness Centrality)}: Mede a frequência com que um município se encontra nos caminhos mais curtos entre outros pares de municípios, identificando as "pontes" críticas da rede.
+\end{itemize}
+\textbf{Com base nessas métricas, foi gerado um "score sentinela" para classificar os municípios. A análise revelou três perfis estratégicos distintos: (1) Hubs Macrorregionais, com alto volume de passageiros; (2) Pontes Críticas, com baixa população mas altíssima importância estrutural; e (3) Nós de Infraestrutura, municípios que abrigam grandes aeroportos.}
+
+\subsection{Modelagem Preditiva Espaço-Temporal}
+Para prever o número de casos de hanseníase, foram desenvolvidos e comparados dois modelos de aprendizado de máquina, utilizando um dataset que integra as métricas de mobilidade com dados históricos e demográficos. O período de treino compreendeu os anos de 2019 a 2021, e o modelo foi testado na previsão de casos para 2022. As seguintes \textit{features} foram construídas:
+\begin{itemize}[label=\textbullet]
+    \item Variáveis demográficas (`populacao`).
+    \item Variáveis de mobilidade (`centralidade\_grau`, `centralidade\_intermediacao`).
+    \item Variáveis de histórico da doença (`casos\_ano\_anterior`, `media\_movel\_3a`, `tendencia\_2a`).
+    \item Uma variável de risco espacial (`risco\_importado`), calculada como a soma dos casos nos municípios vizinhos na rede, ponderada pelo fluxo de passageiros recebido.
+\end{itemize}
+Os modelos investigados foram:
+\begin{itemize}[label=\textbullet]
+    \item \textbf{Random Forest Regressor}: Um modelo de conjunto robusto e interpretável.
+    \item \textbf{Gated Recurrent Unit (GRU)}: Um modelo de rede neural recorrente, conforme proposto na metodologia inicial, ideal para capturar padrões em séries temporais.
+\end{itemize}
+
+\subsection{Validação do Modelo de Mobilidade}
+A validação da relevância epidemiológica da rede foi realizada utilizando dados públicos dos primeiros casos de COVID-19 no Brasil em 2020 (Brasil.IO). A "distância" na rede de mobilidade (baseada no inverso do fluxo de passageiros) a partir de São Paulo foi correlacionada com o tempo (em dias) para a notificação do primeiro caso em outros municípios.
+
+\section{Resultados}
+
+A análise da rede de mobilidade para o ano de 2022 permitiu a classificação dos municípios brasileiros segundo sua importância estratégica. A análise de perfis, baseada na centralidade de grau e de intermediação, revelou com sucesso os diferentes papéis que os municípios desempenham na rede. \textbf{São Paulo e Guarulhos foram classificados como "Hubs Nacionais (Super-Conectores)", combinando alto volume e conectividade. Municípios como Arealva e Jundiaí emergiram como "Pontes Críticas" devido à sua altíssima centralidade de intermediação, apesar do volume de passageiros relativamente baixo. Cidades como Confins (MG) e São José dos Pinhais (PR) foram classificadas como "Nós de Infraestrutura", destacando a importância dos aeroportos na rede.}
+
+A análise de correlação entre as métricas de mobilidade e a taxa de incidência de hanseníase em 2022 revelou uma correlação fraca e não significativa (r $\approx$ -0.02). Isso sugere que a macro-mobilidade nacional não é o principal fator determinante para a taxa de incidência da doença.
+
+No entanto, a integração desses fatores em modelos preditivos de aprendizado de máquina mostrou-se altamente eficaz. O modelo **Random Forest Regressor alcançou um Coeficiente de Determinação (R²) de 0.8654 e um Erro Médio Absolu (MAE) de 2.69 casos**. A análise de importância das features (Figura \ref{fig:feature_importance}) revelou que a **média móvel de casos dos últimos 3 anos (`media\_movel\_3a`) foi a variável mais importante (87\% de importância), seguida pelos casos do ano anterior (8\%). As variáveis de mobilidade, como `centralidade\_grau` e `risco\_importado`, contribuíram com cerca de 1\% cada, atuando como fatores de ajuste fino na predição.** O modelo de rede neural **GRU demonstrou uma performance ainda superior, com um R² de 0.9020.**
+
+A validação da rede com dados da COVID-19 encontrou uma **correlação de Pearson positiva, embora fraca (r = 0.1072)**, entre a distância na rede de mobilidade e o tempo para a primeira notificação, indicando que a rede captura um sinal real da dispersão de patógenos.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.8\textwidth]{fig/feature_importance.png}
+\caption{Importância das variáveis no modelo preditivo RandomForest para casos de hanseníase em 2022.}
+\label{fig:feature_importance}
+\end{figure}
+
+\section{Discussão}
+Os resultados deste estudo demonstram a viabilidade de integrar dados de mobilidade em larga escala para a construção de modelos preditivos para a hanseníase no Brasil. A principal descoberta é a **forte inércia temporal e espacial da doença**: o preditor mais forte para casos futuros é o histórico de casos recentes em nível local, com a média móvel dos últimos três anos explicando 87\% da capacidade preditiva do modelo.
+
+Isso não diminui a importância da mobilidade, mas a contextualiza. As variáveis de mobilidade, embora secundárias, **melhoraram a performance do modelo preditivo e permitiram a criação de uma classificação estratégica das cidades sentinela.** A identificação de diferentes perfis – Hubs, Pontes e Nós de Infraestrutura – permite a formulação de políticas de vigilância mais inteligentes. Por exemplo, a vigilância em "Hubs" com alta incidência, como Recife, deve focar na contenção, enquanto a vigilância em "Pontes Críticas", como Jundiaí, deve focar na detecção precoce para evitar a disseminação inter-regional.
+
+A validação com dados da COVID-19 (r = 0.1072) confirmou que a rede captura um sinal de dispersão real, embora a magnitude fraca da correlação ressalte a influência de outros fatores, como a mobilidade informal de curta distância não capturada em nossos dados. A complexidade estrutural dos dados e o poder computacional necessário para analisá-los reforçam a necessidade de equipes interdisciplinares, como o cerne da ciência de dados \cite{saldanha2021definicao, saldanha2021nesse, tang2021fields}.
+
+\section{Conclusão}
+Este artigo apresentou e executou uma abordagem metodológica que, a partir de dados públicos, construiu uma rede de mobilidade nacional, identificou e classificou cidades sentinela em perfis estratégicos, e desenvolveu modelos de aprendizado de máquina com alto poder preditivo (R² > 0.86) para a hanseníase. Nossos achados quantificam a forte influência da endemicidade histórica e demonstram o papel da mobilidade como um fator secundário, mas relevante, na dinâmica da doença. O framework desenvolvido representa uma ferramenta poderosa para a vigilância epidemiológica, permitindo o direcionamento de recursos e a formulação de estratégias de controle mais eficazes e baseadas em evidências.
+
+\section*{Agradecimentos}
+Este estudo é parte da iniciativa do Sistema de Alerta Precoce de Surtos com Potencial Pandêmico, em desenvolvimento pela Fundação Oswaldo Cruz (Fiocruz) e pela Universidade Federal do Rio de Janeiro, com apoio financeiro da Health Initiative da Fundação Rockefeller (concessão 2023-PPI-007) \cite{oliveira2024acknowledgments}.
+
+\section*{Conflito de Interesses}
+Os autores declaram não haver conflitos de interesse.
+
+\section*{Disponibilidade de Dados}
+Os dados de mobilidade utilizados neste estudo são de domínio público, provenientes do Instituto Brasileiro de Geografia e Estatística (IBGE), Agência Nacional de Aviação Civil (ANAC) e Agência Nacional de Transportes Terrestres (ANTT). Os dados de saúde são provenientes do Sistema de Informação de Agravos de Notificação (SINAN). Os dados de validação da COVID-19 foram obtidos do repositório público Brasil.IO.
+
+\bibliographystyle{elsarticle-num}
+\bibliography{bibliografia}
+
+\end{document}

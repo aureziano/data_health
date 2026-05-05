@@ -1,0 +1,103 @@
+\chapter{Fundamentação Teórica e Tecnológica} \label{chap2}
+
+A construção de um modelo preditivo para a hanseníase exige a convergência de conhecimentos em epidemiologia clínica e algoritmos de aprendizado de máquina de última geração. Este capítulo detalha as bases patológicas da doença e o arcabouço matemático das ferramentas utilizadas para a análise de dados.
+
+\section{A Hanseníase: Patologia e Neuropatia}
+
+A hanseníase é uma doença infecciosa crônica causada pelo \textit{Mycobacterium leprae}, um bacilo álcool-ácido resistente que apresenta tropismo único pelo sistema nervoso periférico \cite{lepra_ref_pilar}. O principal mecanismo de invasão envolve o ataque direto às células de Schwann, responsáveis pela produção de mielina. Essa invasão provoca uma desmielinização inflamatória severa que interrompe a transmissão de sinais sensoriais e motores, configurando a incapacidade física não apenas como uma "ferida", mas como uma falha profunda na transmissão do sinal biológico \cite{britton2004leprosy, scollard2006continuing}.
+
+Sua patogênese é determinada pela resposta imune do hospedeiro, estruturando-se no espectro de Ridley-Jopling. As formas clínicas (Tuberculoide, Dimorfa, Virchowiana) correlacionam-se diretamente com a velocidade de degradação neural. Formas multibacilares (MB), possuindo maior carga bacilar, geram um "ruído" inflamatório contínuo que acelera o desenvolvimento da incapacidade física \cite{britton2004leprosy, scollard2006continuing}.
+
+O dano nervoso, marca registrada da doença, estabelece o "Loop da Incapacidade". O GIF 2 é o resultado final de um ciclo de perda progressiva: a desmielinização causa Insensibilidade (perda de sinal), o que propicia Microtraumas não percebidos, levando à Infecção secundária e, finalmente, à Deformidade física visível \cite{britton2004leprosy, scollard2006continuing}.
+
+\begin{figure}[H]
+\centering
+\caption{O Loop da Incapacidade Física na Hanseníase}
+\label{fig:loop_incapacidade}
+\begin{tikzpicture}[
+    node distance=2.5cm,
+    block/.style = {rectangle, draw, fill=blue!10, rounded corners, text centered, minimum height=1.2cm, text width=3.5cm, font=\small},
+    arrow/.style = {draw, -latex, thick}
+]
+    \node [block] (invasao) {Desmielinização neural};
+    \node [block, right=1.5cm of invasao] (perda) {Insensibilidade (Perda de Sinal)};
+    \node [block, right=1.5cm of perda] (trauma) {Microtraumas não percebidos};
+    \node [block, below=1cm of trauma] (infeccao) {Infecção Secundária};
+    \node [block, fill=red!10, left=1.5cm of infeccao] (deformidade) {GIF 2: Deformidade Física};
+
+    \path [arrow] (invasao) -- (perda);
+    \path [arrow] (perda) -- (trauma);
+    \path [arrow] (trauma) -- (infeccao);
+    \path [arrow] (infeccao) -- (deformidade);
+    \path [arrow, dashed] (deformidade) -| (invasao) node[near start, below, font=\scriptsize] {\textit{Agravamento crônico}};
+\end{tikzpicture}
+\end{figure}
+
+\subsection{O Significado Epidemiológico do Grau de Incapacidade Física (GIF)}
+
+A avaliação do Grau de Incapacidade Física (GIF) constitui a pedra angular do monitoramento da gravidade da hanseníase. Diferentemente de outras doenças infecciosas onde a carga é medida primariamente pela mortalidade, na hanseníase, a morbidade e o estigma associados às deformidades físicas representam o principal peso social e econômico \cite{nery2021physical}. O sistema de graduação recomendado pela Organização Mundial da Saúde (OMS) e adotado pelo Ministério da Saúde do Brasil classifica os pacientes em três níveis \cite{boletim2025hanseniase, estrat_pa_2024}:
+
+\begin{itemize}
+    \item \textbf{Grau 0:} Ausência de comprometimento neural nos olhos, mãos e pés.
+    \item \textbf{Grau 1:} Diminuição ou perda da sensibilidade (anestesia) sem deformidades visíveis. Este estágio representa o dano neural estabelecido, porém muitas vezes reversível com intervenção oportuna.
+    \item \textbf{Grau 2 (G2D):} Presença de deformidades visíveis (lagoftalmo, garras, reabsorção óssea, mãos e pés caídos) ou danos graves (úlceras, cegueira).
+\end{itemize}
+
+A detecção de um caso novo já apresentando Grau 2 de Incapacidade (G2D) é universalmente reconhecida como um indicador de \textbf{falha operacional} e \textbf{atraso diagnóstico} \cite{delayed_diagnosis_northeast}. Significa que o paciente conviveu com a doença ativa por um período prolongado, permitindo que a ação direta do bacilo ou a resposta inflamatória causassem danos irreversíveis antes da primeira intervenção terapêutica \cite{freitas2025evaluating}.
+
+\subsection{Progressão da Incapacidade Pós-Alta e a "Falsa Cura"}
+
+Um aspecto crítico é a evolução da incapacidade após a alta (cura bacteriológica). A poliquimioterapia (PQT) interrompe a transmissão e elimina o bacilo, mas não reverte imediatamente o dano neural estabelecido. Estudos de sobrevivência indicam que a probabilidade de progressão do grau de incapacidade (piora da função neural) pode atingir até 35\% em um acompanhamento de 15 anos pós-alta \cite{disability_progression_survival}. Este fenômeno, muitas vezes invisibilizado pelas estatísticas de casos ativos, reforça a necessidade de modelos preditivos que identifiquem precocemente os pacientes com perfil de risco para neuropatias tardias.
+
+\section{Redução de Dimensionalidade: O Algoritmo UMAP}
+
+Para lidar com a alta dimensionalidade dos dados sindrômicos (SINAN), utilizamos o \textit{Uniform Manifold Approximation and Projection} (UMAP). Diferente do PCA (linear) ou t-SNE (focado no local), o UMAP baseia-se na geometria riemanniana e na topologia algébrica \cite{mcinnes2018umap}.
+
+O fundamento matemático do UMAP assume que os dados estão distribuídos uniformemente sobre uma variedade localmente conectada (\textit{manifold}) $M$. A técnica constrói um grafo de vizinhança ponderado (\textit{fuzzy simplicial set}) e tenta encontrar uma projeção de baixa dimensão que minimize a entropia cruzada entre o grafo original $G$ e a projeção $G'$. A função de custo é dada por:
+\begin{equation}
+    C = \sum_{e \in E} w_h(e) \log\left(\frac{w_h(e)}{w_l(e)}\right) + (1 - w_h(e)) \log\left(\frac{1 - w_h(e)}{1 - w_l(e)}\right)
+\end{equation}
+Onde $w_h(e)$ representa a probabilidade de existência de uma aresta na alta dimensão e $w_l(e)$ na baixa dimensão. Esta abordagem permite capturar tanto as relações intracluster quanto a hierarquia entre os diferentes aglomerados epidemiológicos identificados \cite{becht2018dimensionality}.
+
+A diferença fundamental entre o UMAP e o t-SNE — o método mais utilizado anteriormente para a mesma finalidade — reside em suas funções objetivo. O t-SNE minimiza a divergência KL de forma predominantemente \textbf{local}: só penaliza fortemente a separação de vizinhos próximos, o que preserva agrupamentos internos mas deforma as distâncias entre clusters distintos. O UMAP, ao minimizar a entropia cruzada sobre o grafo de vizinhança \textbf{completo}, mantém simultaneamente a coesão intracluster e as distâncias \textit{relativas} entre grupos — uma propriedade crucial para a análise epidemiológica, onde não apenas queremos identificar perfis distintos, mas preservar a hierarquia de gravidade entre eles. Em termos de sistemas de informação, o UMAP opera como um compressor com perdas mínimas da estrutura topológica global, enquanto o t-SNE comporta-se como um compressor de estrutura local. A Tabela \ref{tab:metricas_projecao} documenta quantitativamente essa superioridade.
+
+\section{Aprendizado Supervisionado e Gradient Boosting}
+
+Os modelos de \textit{Gradient Boosting Decision Trees} (GBDT), como LightGBM e XGBoost, são particularmente eficazes para dados tabulares de saúde \cite{chen2016xgboost, ke2017lightgbm}. Eles funcionam através da construção sequencial de árvores de decisão, onde cada nova árvore tenta corrigir os resíduos (erros) das árvores anteriores utilizando a descida de gradiente funcional.
+
+O LightGBM destaca-se pela técnica \textit{Gradient-based One-Side Sampling} (GOSS) e \textit{Exclusive Feature Bundling} (EFB), que permitem o processamento eficiente de milhões de registros mantendo a acurácia \cite{ke2017lightgbm}. A explicabilidade desses modelos é garantida pelos \textit{SHAP Values} (\textit{Shapley Additive Explanations}), baseados na teoria dos jogos cooperativos, que atribuem a cada característica uma contribuição numérica para a previsão final do risco de incapacidade física \cite{lundberg2017shap}.
+\section{A Modelagem de Séries Temporais e Gated Recurrent Units (GRU)}
+
+Para prever a subnotificação, recorremos a modelos que capturam dependências temporais complexas. As Redes Neurais Recorrentes (RNN) tradicionais sofrem com o problema do desvanecimento do gradiente (\textit{vanishing gradient}) em sequências longas. As arquiteturas de \textit{Gated Recurrent Units} (GRU) mitigam este efeito através de portais de atualização e reset \cite{cho2014gru}. 
+
+Em contrapartida às redes \textit{Long Short-Term Memory} (LSTM) ou arquiteturas do tipo \textit{Transformer}, que exigem mais memória e maior volume de dados para afinação ótima, a GRU unifica e simplifica as operações em apenas dois portões (update e reset), eliminando o cell state separado da LSTM \cite{chung2014empirical}. Esta otimização estrutural provê à GRU um poder de regularização e uma eficiência de convergência nitidamente superiores para \textit{datasets} tubulares de magnitude intermediária, como as agregações mensais epidemiológicas do SINAN, mitigando rapidamente perigos de \textit{overfitting} \cite{cho2014gru}.
+
+Formalmente, as Equações \ref{eq:gru_update} a \ref{eq:gru_hidden} detalham a arquitetura da rede em um dado passo de tempo $t$:
+
+\begin{align}
+    z_t &= \sigma(W_z x_t + U_z h_{t-1} + b_z) \label{eq:gru_update}\\
+    r_t &= \sigma(W_r x_t + U_r h_{t-1} + b_r) \label{eq:gru_reset}\\
+    \tilde{h}_t &= \tanh(W_h x_t + U_h (r_t \odot h_{t-1}) + b_h) \label{eq:gru_candidate}\\
+    h_t &= (1 - z_t) \odot h_{t-1} + z_t \odot \tilde{h}_t \label{eq:gru_hidden}
+\end{align}
+
+Conforme a Equação \ref{eq:gru_update}, $z_t$ atua como o \textit{update gate} que controla a retenção da memória $h_{t-1}$. A Equação \ref{eq:gru_reset} descreve a ativação do \textit{reset gate} $r_t$, operando como filtro de relevância do histórico. Subsequencialmente na Equação \ref{eq:gru_candidate}, calcula-se a memória candidata $\tilde{h}_t$ e, estruturando o processamento final de atualização contínua, temos a Equação \ref{eq:gru_hidden} (onde $\odot$ denota o produto de Hadamard e $\sigma$ a função sigmoid não-linear). Esta capacidade de memória adaptativa garante que as sazonalidades de anos anteriores (e.g. campanhas de saúde cíclicas) sejam preservadas na projeção futura, funcionando estruturalmente como um filtro passa-baixas denso e adaptável.
+
+
+\subsection{Fundamentação de Métodos Clássicos e Híbridos}
+
+Além das redes neurais, a literatura recomenda o uso de modelos autorregressivos integrados e médias móveis (ARIMA/SARIMA) e o Espaçamento Exponencial de Holt-Winters \cite{hyndman2018forecasting}. O SARIMA (\textit{Seasonal Autoregressive Integrated Moving Average}), em particular, é fundamental para lidar com a sazonalidade anual observada na hanseníase, onde fatores operacionais e ciclos de busca ativa influenciam as taxas de detecção em intervalos periódicos.
+
+
+Diferente da validação cruzada tradicional $k$-fold, que quebra a ordem temporal e permite o vazamento de informações futuras (\textit{data leakage}), utilizamos a Validação por Janelas Deslizantes (\textit{Walk-forward Validation}). A Figura \ref{fig:comparativo_validacao} apresenta o contraste entre estas duas abordagens, evidenciando como a escolha do método correto evita que o modelo aprenda padrões baseados em informações que ainda não ocorreram no eixo temporal real \cite{tashman2000forecasting}.
+
+\begin{figure}[H]
+\centering
+\caption{Contraste Metodológico: Validação Tradicional vs. Walk-forward}
+\label{fig:comparativo_validacao}
+\includegraphics[width=0.9\textwidth]{fig/comparativo_metodos_validacao.png}
+\end{figure}
+
+No esquema Walk-forward, o conjunto de treinamento é expandido incrementalmente para prever os pontos subsequentes (\textit{out-of-sample}), garantindo que a ordem cronológica seja estritamente respeitada.
+
+Em contextos de saúde pública e vigilância epidemiológica, a validação temporal é o "padrão ouro" para modelos de alerta precoce, pois simula fielmente a condição de tomada de decisão em tempo real, onde o gestor possui apenas dados históricos para planejar ações futuras \cite{shahidi2021forecasting}.

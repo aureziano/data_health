@@ -7,7 +7,9 @@ dir_tratamento = "./tratamento"
 os.makedirs(dir_tratamento, exist_ok=True)
 
 # 1. Carregamento dos dados
-caminho_arquivo = r"./data/HANS/HANSENIASE_TOTAL_26_11_2025.csv"
+import sys, os; sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+import config
+caminho_arquivo = str(config.PATHS['hanceniase'])
 try:
     df = pd.read_csv(caminho_arquivo, encoding="utf-8", low_memory=False)
 except FileNotFoundError:

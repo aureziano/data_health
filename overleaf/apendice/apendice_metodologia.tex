@@ -1,0 +1,48 @@
+\chapter{Transparência Empírica e Tratamento de Variáveis} % Main appendix title
+\label{apendicea:metodologia}
+
+Esta seção técnica documenta, de forma exaustiva e rigorosa, o processo de seleção, mensuração e imputação das variáveis utilizadas na modelagem preditiva desta dissertação (focando nas métricas socio-clínicas e operacionais).
+
+Em consonância com as boas práticas de Ciência de Dados em Saúde e visando garantir a reprodutibilidade dos achados preditivos apresentados no Capítulo 5, realizamos um diagnóstico estatístico preliminar de cada característica dos pacientes em relação ao desfecho prognóstico principal: a incapacidade física instalada (\textit{Grau 2 de Incapacidade Física - G2D}) \cite{rocha_transparencia_2023, silva_cura_2024}.
+
+\section{Análise Univariada e Imputação}
+
+O dataset do SINAN frequentemente sofre com dados incompletos (\textit{missing values}). Para mitigar possíveis ruídos algorítmicos decorrentes de atributos enviesados, calculamos a completude histórica percentual.
+
+A estratégia de tratamento obedeceu aos critérios de robustez estatística: variáveis categóricas incompletas foram imputadas utilizando sua \textit{Moda} intra-cluster, enquanto variáveis numéricas com distorção de cauda pesada (altos \textit{outliers}) foram imputadas via \textit{Mediana} estatística \cite{pereira2021imputation}. Os \textit{outliers} foram triados matematicamente utilizando o método do Intervalo Interquartil (IQR).
+
+% Tabela 1: Métricas Descritivas e Tratamento de Variáveis
+\begin{table}[H]
+\centering
+\caption{Métricas Descritivas e Tratamento de Variáveis (SINAN)}
+\label{tab:missing_data}
+\input{tabs/apendice_imputacao.tex}
+\end{table}
+
+A tabela acima resume os percentuais de completude e a aplicação dos métodos determinísticos para as principais colunas clínicas de nossa amostra modelada. Note-se a ausência substancial na \textit{Dose Recebida} e alto índice de \textit{Outliers IQR} em contagens quantitativas contínuas (ex: número de lesões nervosas afetadas).
+
+\section{Associação e Relevância Preditiva com G2D}
+
+Após o processo de higienização do esquema de dados, aplicamos técnicas de \textit{Feature Selection} para isolar numericamente os fatores que impulsionariam os modelos de aprendizado de máquina em direção ao alvo "Gravidade Diagnóstica" (G2D=1).
+
+Empregamos o \textit{Kruskal-Wallis H-test} \cite{kruskal1952use}, um método não-paramétrico de análise de variância, para verificar se havia evidência estatística sólida de que os níveis/grupos de cada variável categórica apresentavam distribuições diferentes entre si perante o Grau 2. Em paralelo, capturamos o \textit{Mutual Information (MI)} de cada combinação linear codificada (via \textit{One-Hot Encoding}) para capturar relações complexas (non-lineares).
+
+\begin{table}[H]
+\centering
+\caption{Análise de Variância (Kruskal-Wallis) para G2D}
+\label{tab:kw_g2d}
+\input{tabs/apendice_kw.tex}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Relevância Preditiva via Mutual Information (MI)}
+\label{tab:mi_g2d}
+\input{tabs/apendice_mi.tex}
+\end{table}
+
+A Tabela \ref{tab:kw_g2d} exibe a estatística de teste \textit{Kruskal-Wallis} (associada a um P-Value). 
+Já a Tabela \ref{tab:mi_g2d} demonstra a contribuição preditiva informacional destas mesmas variáveis quando transformadas via codificação \textit{One-Hot} para o processamento de Máquinas de Vetores de Suporte ou \textit{Gradient Boosting} \cite{scikitlearn_MI_2024}.
+
+\vspace{1cm}
+O conjunto dessas duas metodologias garante a ancoragem clínica: atestamos que a construção dos modelos multivariados descritos no Capítulo 5 processa uma série de variáveis cujas relevâncias ao desenvolvimento de G2D fogem estritamente do acaso ($p-value \ll 0.05$).

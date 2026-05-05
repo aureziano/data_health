@@ -1,0 +1,132 @@
+\documentclass[preprint,12pt]{elsarticle}
+
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{graphicx}
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
+\usepackage{natbib}
+\usepackage{enumitem} % For custom list environments
+\usepackage{lipsum} % For dummy text if needed, will remove later
+\usepackage{xcolor} % For coloring new information, not used directly in final output, but good for drafting.
+
+% Redefine section/subsection fonts if desired for closer journal match, but standard is usually fine.
+% \usepackage{sectsty}
+% \sectionfont{\fontsize{14}{16}\selectfont\bfseries}
+% \subsectionfont{\fontsize{12}{14}\selectfont\bfseries}
+
+\journal{Computational Statistics \& Data Analysis}
+
+\begin{document}
+
+\begin{frontmatter}
+
+\title{Modelagem e Predição Espaço-Temporal da Hanseníase no Brasil: Uma Abordagem Integrada de Redes de Mobilidade Humana e Fatores Socioambientais}
+
+\author[inst1,inst2]{[Autores]} % Placeholder for actual author names
+% \ead{autores@instituicao.br} % Placeholder for email, if needed
+
+\affiliation[inst1]{organization={Centro de Integração de Dados e Conhecimentos para a Saúde (CIDACS), Instituto Gonçalo Moniz, Fundação Oswaldo Cruz (Fiocruz)},
+            city={Salvador},
+            postcode={41745-715},
+            state={Bahia},
+            country={Brasil}}
+\affiliation[inst2]{organization={Laboratório de Medicina e Saúde Pública de Precisão (MeSP2), Instituto Gonçalo Moniz, Fundação Oswaldo Cruz (Fiocruz)},
+            city={Salvador},
+            state={Bahia},
+            country={Brasil}}
+\affiliation[inst3]{organization={Luiz Coimbra Institute of Graduate and Engineering Research (COPPE), Federal University of Rio de Janeiro (UFRJ)},
+            city={Rio de Janeiro},
+            state={Rio de Janeiro},
+            country={Brasil}}
+
+\begin{abstract}
+A detecção e previsão da dispersão de patógenos são cruciais para a prevenção da transmissão generalizada de doenças, e a mobilidade humana é um fator fundamental nesse processo \cite{oliveira2024summary}. No Brasil, a hanseníase, uma doença infecciosa crônica ainda endêmica, representa um significativo desafio de saúde pública \cite{inovacao2024computacional, ministerio2022protocolo}. Este artigo propõe uma abordagem de modelagem e predição espaço-temporal para a incidência da hanseníase, integrando dados de mobilidade humana com fatores socioambientais e demográficos. Utilizando uma representação baseada em grafos da rede de mobilidade intermunicipal do Brasil, construída a partir de dados de transporte aéreo, rodoviário e fluvial \cite{oliveira2024summary, oliveira2024data, oliveira2024construction}, empregaremos algoritmos avançados como o \texttt{Ford--Fulkerson} para identificar os municípios mais adequados como locais sentinela para detecção precoce de patógenos e para prever rotas de disseminação \cite{oliveira2024summary, oliveira2024manaos}. Além disso, exploraremos técnicas de aprendizado de máquina, incluindo \textbf{Redes Neurais Recorrentes (RNNs)} e \textbf{Gated Recurrent Units (GRUs)}, que são eficazes para análise de séries temporais \cite{inovacao2024modelagem, shahidi2024conclusion, morid2023time, silva2022machine, madden2024deep}, e consideraremos modelos híbridos que combinam abordagens epidemiológicas compartimentais com aprendizado de máquina para aprimorar a previsão da disseminação da doença \cite{inovacao2024modelagem, silva2022machine, madden2024deep}. Os resultados esperados incluem a identificação de \textbf{"cidades-portal" (gateway cities) ou "hubs" de transmissão} da hanseníase \cite{inovacao2024modelagem} e uma melhoria na cobertura de mobilidade de redes de vigilância existentes \cite{oliveira2024findings}. A validação do modelo será realizada utilizando dados genômicos do SARS-CoV-2 de surtos anteriores no Brasil \cite{oliveira2024summary, oliveira2024findings, oliveira2024genetic}, demonstrando o potencial da integração de dados de mobilidade para aprimorar os sistemas de vigilância em saúde pública \cite{oliveira2024improvements}.
+\end{abstract}
+
+\begin{keyword}
+Hanseníase \sep Mobilidade Humana \sep Modelagem Espaço-Temporal \sep Aprendizado de Máquina \sep Vigilância em Saúde \sep Big Data
+\end{keyword}
+
+\end{frontmatter}
+
+% \linenumbers % Descomentar para adicionar números de linha, útil para revisão.
+
+\section{Introdução}
+A hanseníase é uma doença infecciosa crônica, causada pelo \textit{Mycobacterium leprae}, que, apesar de curável, permanece endêmica em diversas regiões do mundo, sendo o Brasil um dos países com maior número de casos \cite{inovacao2024computacional, ministerio2022protocolo, leprae2022causada}. Sua transmissão ocorre principalmente por contato próximo e prolongado com indivíduos não tratados, através das vias aéreas superiores \cite{inovacao2024modelagem, bacilo2022principal}. Historicamente, a disseminação da hanseníase esteve intrinsecamente ligada à migração de pessoas por rotas comerciais e ao colonialismo \cite{inovacao2024modelagem, roberts2018bioarchaeology, ministerio2022protocolo}. Consequentemente, a compreensão dos padrões de \textbf{mobilidade humana} é fundamental para detectar e prever a dispersão de agentes infecciosos \cite{oliveira2024summary, inovacao2024modelagem, lima2022climate, saldanha2021resumo}.
+
+A detecção precoce da hanseníase e o tratamento oportuno são essenciais para prevenir incapacidades físicas irreversíveis e quebrar a cadeia de transmissão \cite{inovacao2024analise, hanseniase2022objetivos, saude2022equipes}. No entanto, os sinais e sintomas iniciais podem ser discretos, dificultando o diagnóstico em fases precoces, especialmente nas formas paucibacilares \cite{suspeicao2022diagnostica, inicial2022forma}. Casos detectados em menores de 15 anos de idade são considerados um indicador de transmissão ativa e recente na comunidade \cite{inovacao2024analise, hanseniase2022objetivos, crianca2022gravidade}, o que ressalta a importância de estratégias de vigilância aprimoradas. Em 2019, o Brasil notificou 1.545 casos novos em menores de 15 anos \cite{boletim2021epidemiologico}.
+
+Este artigo propõe uma abordagem inovadora para informar a seleção de locais de amostragem em uma rede sentinela avançada para a detecção precoce de patógenos, com foco na hanseníase, e para rastrear as rotas mais prováveis de disseminação \cite{oliveira2024summary}. Para isso, integramos uma vasta gama de dados de mobilidade intermunicipal do Brasil com métodos computacionais avançados, visando não apenas prever a propagação, mas também otimizar a infraestrutura de vigilância em saúde pública. A aplicação de \textbf{big data} e \textbf{aprendizado de máquina (Machine Learning - ML)} oferece um novo ferramental para análise, monitoramento e predição de eventos de saúde-doença na população e para o estudo de seus determinantes socioambientais e demográficos \cite{inovacao2024computacional, mooney2018big, saldanha2021resumo, saldanha2021ambito}. A hanseníase, como uma doença estigmatizante, exige uma consideração cuidadosa dos desafios éticos e metodológicos no uso de \textit{big data} \cite{inovacao2024desafios, vanbrakel2019stigma}.
+
+\section{Revisão da Literatura}
+
+A mobilidade humana tem sido consistentemente reconhecida como um fator chave na transmissão de doenças infecciosas \cite{oliveira2024summary, inovacao2024modelagem, lima2022climate, lima2022dynamics, tang2021fields}. Estudos anteriores demonstraram como as redes de transporte influenciam a propagação de epidemias, como a SARS-CoV-2 \cite{oliveira2024summary, inovacao2024modelagem, silva2022machine} e arboviroses como dengue, chikungunya e zika \cite{inovacao2024modelagem, lima2022temporal, lima2022climate}. A modelagem dessas dinâmicas exige uma compreensão aprofundada das interconexões geográficas e do fluxo de passageiros \cite{inovacao2024modelagem}. A complexidade dessas dinâmicas muitas vezes excede a capacidade de modelos estatísticos convencionais \cite{saldanha2021sistemas}.
+
+Sistemas de vigilância epidemiológica, como a rede sentinela para doenças semelhantes à influenza no Brasil, são cruciais para monitorar a saúde da população \cite{oliveira2024findings, oliveira2024ranking}. No entanto, a otimização desses sistemas é um desafio contínuo. Pesquisas anteriores sobre redes sentinela frequentemente se concentravam em maximizar a cobertura populacional, com poucos estudos incorporando explicitamente padrões de mobilidade na sua concepção \cite{oliveira2024genetic, oliveira2024improvements}. A ineficiência na localização dos locais sentinela pode levar a diagnósticos tardios e a uma resposta inadequada a surtos de doenças \cite{oliveira2024improvements}. A \textbf{ciência de dados} e o \textbf{big data} oferecem as ferramentas para uma revisão profunda de como a pesquisa é feita e ensinada, permitindo a transição de abordagens \textit{hypothesis-driven} para \textit{data-driven} \cite{saldanha2021introducao, saldanha2021inovacao, tang2021fields}.
+
+O advento do \textbf{big data} e do \textbf{aprendizado de máquina (Machine Learning - ML)} tem transformado a pesquisa em saúde pública, permitindo a análise de grandes e complexos volumes de informações para identificação de padrões, previsão de desfechos e tomada de decisões \cite{inovacao2024computacional, mooney2018big, saldanha2021resumo, saldanha2021inovacao}. Técnicas de ML, como \textbf{Redes Neurais Recorrentes (RNNs)} e \textbf{Gated Recurrent Units (GRUs)}, têm se mostrado particularmente eficazes para lidar com dados de séries temporais e sequências de eventos em contextos de saúde \cite{inovacao2024modelagem, shahidi2024exploring, shahidi2024conclusion, morid2023time, silva2022machine, madden2024deep}. O uso de representação de matriz de sequência em conjunto com modelos GRU, por exemplo, demonstrou superar a representação de sequências de eventos em previsões clínicas, obtendo melhorias de mais de 20\% em AUC e sensibilidade em uma coorte de mais de 240.000 indivíduos \cite{shahidi2024conclusion, shahidi2024contribution}. Além disso, a integração de modelos epidemiológicos compartimentais (e.g., SIR/SEIR) com abordagens de ML promete melhorar a acurácia das previsões e fornecer insights mais detalhados sobre a dinâmica de transmissão \cite{inovacao2024modelagem, silva2022machine, madden2024deep}.
+
+A hanseníase, embora com um período de incubação longo (em média cinco anos, mas podendo durar até 20 anos ou mais) \cite{bacilo2022principal, scollard2016pathogenesis} e dinâmica de transmissão distinta, compartilha com outras doenças infecciosas a sensibilidade aos padrões de movimentação humana. O diagnóstico tardio, frequentemente associado ao \textbf{Grau de Incapacidade Física 2 (GIF2)}, é um indicador crítico de falhas na vigilância \cite{inovacao2024analise, hanseniase2022objetivos}. Portanto, a aplicação de modelos espaço-temporais baseados em mobilidade pode oferecer um meio poderoso para identificar áreas de maior risco para transmissão e diagnóstico tardio, permitindo intervenções mais eficazes \cite{inovacao2024analise}.
+
+\section{Metodologia}
+
+Neste estudo de modelagem e validação, compilamos e curamos um conjunto de dados abrangente sobre a mobilidade intermunicipal no Brasil, englobando transporte aéreo, rodoviário e fluvial \cite{oliveira2024summary, oliveira2024data}. A metodologia proposta visa construir uma rede de mobilidade, identificar locais sentinela otimizados e prever rotas de disseminação de patógenos, utilizando técnicas de estatística computacional e aprendizado de máquina.
+
+\subsection{Fontes de Dados}
+\textbf{Dados de Mobilidade Humana}: Foram coletados e curados dados de mobilidade em larga escala de diversas fontes administrativas para uma compreensão abrangente da mobilidade intermunicipal \cite{oliveira2024data}.
+\begin{itemize}[label=\textbullet]
+    \item \textbf{Redes Rodoviária e Fluvial}: Dados de mobilidade intermunicipal de 2016 foram obtidos do Instituto Brasileiro de Geografia e Estatística (IBGE) \cite{oliveira2024summary, oliveira2024data, inovacao2024modelagem, peixoto2020modeling}. A capacidade semanal máxima das redes rodoviárias e fluviais foi de 78,3 milhões de passageiros em 2016 \cite{oliveira2024findings}.
+    \item \textbf{Transporte Aéreo}: Dados de transporte aéreo de 2017 a 2022 foram obtidos da Agência Nacional de Aviação Civil (ANAC) \cite{oliveira2024summary, oliveira2024data, oliveira2024transport, inovacao2024modelagem}. Os voos transportaram anualmente 79,9 milhões de passageiros (IC 95\% 58,3--101,4 milhões) dentro do Brasil durante esse período, com picos sazonais no final da primavera e verão \cite{oliveira2024findings, inovacao2024modelagem}.
+    \item \textbf{Transporte Intermunicipal por Ônibus}: Dados de capacidade de ônibus intermunicipais de 2022 foram coletados do relatório de transporte da Confederação Nacional do Transporte (CNT) \cite{oliveira2024summary, oliveira2024data, oliveira2024transport}.
+\end{itemize}
+\textbf{Dados Socioambientais e Demográficos}: Informações demográficas e geográficas de municípios foram extraídas de dados do IBGE \cite{inovacao2024modelagem}. A integração de características socioambientais permitirá contextualizar a dinâmica da hanseníase, considerando que a doença está associada a condições de pobreza e acesso precário a serviços de saúde \cite{inovacao2024heterogeneidade, ministerio2022protocolo}.
+
+\textbf{Dados Genéticos para Validação}: Para a validação do modelo, foram utilizados dados genéticos do SARS-CoV-2 de municípios brasileiros durante a fase inicial de introdução do vírus (25 de fevereiro a 30 de abril de 2020) e da emergência da variante Gamma (P.1) em Manaus (6 de janeiro a 1º de março de 2021) \cite{oliveira2024summary, oliveira2024genetic, oliveira2024transport}.
+
+\subsection{Construção da Rede de Mobilidade}
+A rede de mobilidade do Brasil foi construída como um grafo $G=(V, E)$, onde $V=\{v_1, v_2, \ldots, v_n\}$ representa um conjunto de $n$ nós, e cada nó $v_i \in V$ corresponde a uma cidade \cite{oliveira2024construction}. $E=\{e_1, e_2, \ldots, e_m\}$ representa um conjunto de $m$ arestas, onde cada aresta $e_j \in E$ possui a frequência de movimento entre um par de cidades como um peso associado \cite{oliveira2024construction}.
+
+Para classificar os 5570 municípios brasileiros de acordo com sua adequação como locais sentinela para detecção precoce de patógenos, foi utilizado o algoritmo \textbf{\texttt{Ford--Fulkerson}} \cite{oliveira2024summary, ford1956maximal}. Este algoritmo permitiu prever os locais mais adequados para detecção precoce e rastrear a trajetória mais provável de um patógeno recém-surgido \cite{oliveira2024summary}. A análise dos 7.746.479 caminhos mais prováveis a partir dos nós de origem revelou que 3857 cidades cobrem completamente o padrão de mobilidade de todas as 5570 cidades no Brasil, e 557 (10,0\%) dessas cidades cobrem 6.313.380 (81,5\%) dos padrões de mobilidade estudados \cite{oliveira2024findings}.
+
+\subsection{Modelagem Preditiva Espaço-Temporal}
+O desenvolvimento de um \textbf{modelo preditivo espaço-temporal para a incidência da hanseníase} será realizado integrando os dados da rede de mobilidade com informações socioambientais e demográficas \cite{inovacao2024modelagem}. Serão investigadas as seguintes abordagens de aprendizado de máquina:
+\begin{itemize}[label=\textbullet]
+    \item \textbf{Redes Neurais Recorrentes (RNNs) e Gated Recurrent Units (GRUs)}: Estes são algoritmos de aprendizado de máquina profundos que são particularmente eficazes para dados de séries temporais e sequências, como os padrões de mobilidade e a progressão temporal de doenças \cite{inovacao2024modelagem, shahidi2024exploring, shahidi2024conclusion, morid2023time, silva2022machine, madden2024deep, lecun2015deep, hochereiter1997long}. O uso de representação de matriz de sequência em conjunto com modelos GRU tem demonstrado superar a representação de sequências de eventos em previsões clínicas \cite{shahidi2024conclusion, shahidi2024contribution}.
+    \item \textbf{Modelos Híbridos}: Serão considerados modelos que combinam modelos epidemiológicos compartimentais (e.g., SIR/SEIR), que são matematicamente modelados para doenças infecciosas \cite{inovacao2024modelagem, silva2022machine, madden2024deep, kermack1932contributions}, com técnicas de aprendizado de máquina. Esses modelos podem fornecer uma representação mais rica da dinâmica da transmissão e melhorar a capacidade de previsão \cite{inovacao2024modelagem, silva2022machine, madden2024deep}. O desempenho de modelos com \texttt{Neural Networks} para prever a densidade de \textit{Aedes aegypti} e a ocorrência de arboviroses em Recife, Brasil, já demonstrou a viabilidade dessas abordagens \cite{rubio2019zika}.
+\end{itemize}
+A \textbf{incorporação de camadas adicionais de informação}, como o comportamento de mobilidade sazonal (dado que os voos, por exemplo, apresentam picos sazonais no final da primavera e verão) \cite{inovacao2024modelagem, oliveira2024findings}, aprimorará a estratégia de vigilância. Isso permitirá identificar \textbf{"cidades-portal" (gateway cities) ou "hubs" de transmissão} da hanseníase \cite{inovacao2024modelagem}, que seriam locais estratégicos para intervenções de saúde pública.
+
+\subsection{Validação e Interpretabilidade do Modelo}
+A validação do framework analítico será feita comparando as rotas de disseminação baseadas em mobilidade com as vias de dispersão do SARS-CoV-2 no Brasil, utilizando dados genômicos \cite{oliveira2024validation, oliveira2024genetic, candido2020evolution}. O modelo demonstrou alta acurácia, mapeando com precisão 22 (51\%) das 43 cidades afetadas pelo clade 1 e 28 (60\%) das 47 cidades afetadas pelo clade 2, que se espalharam de São Paulo (25 de fevereiro a 30 de abril de 2020) \cite{oliveira2024findings, oliveira2024propagation}. Similarmente, para o Rio de Janeiro, o modelo mapeou 20 (49\%) das 41 cidades afetadas pelo clade 1 e 28 (58\%) das 48 cidades afetadas pelo clade 2 \cite{oliveira2024findings, oliveira2024propagation}. Adicionalmente, 224 (73\%) das 307 localidades sugeridas para detecção precoce de patógenos emergentes em Manaus corresponderam às primeiras cidades afetadas pela transmissão da variante Gamma (6--16 de janeiro de 2021) \cite{oliveira2024findings}.
+
+A \textbf{interpretabilidade do modelo (Explainable AI - XAI)} é crucial para traduzir as descobertas em políticas públicas acionáveis \cite{inovacao2024analise, goldstein2020convergence, tang2021fields, arik2020interpretable, rodriguez2023einns}. Compreender as variáveis que mais contribuem para a previsão da disseminação da hanseníase permitirá que os formuladores de políticas direcionem recursos de forma mais eficaz e desenvolvam estratégias de intervenção mais direcionadas. Métricas como o \textbf{Root Mean Squared Error (RMSE)} podem ser empregadas para avaliar o desempenho do modelo em relação à log-incidência padronizada \cite{madden2024sfnn}.
+
+\section{Discussão}
+A integração de dados de mobilidade humana com algoritmos de aprendizado de máquina e modelagem espaço-temporal oferece um avanço significativo na vigilância e controle da hanseníase no Brasil. Os achados de um estudo anterior \cite{oliveira2024findings} demonstram que, ao estrategicamente incorporar padrões de mobilidade na rede de vigilância existente para doenças semelhantes à influenza (realocando 111 de 199 locais sentinela), a cobertura de mobilidade poderia ter uma melhoria de 33,6\% (de 4.059.155 para 5.422.535 padrões de mobilidade, ou de 52,4\% para 70,0\%) sem expandir o número de locais sentinela. Isso ressalta que o tamanho da cidade por si só não determina a cobertura máxima de mobilidade humana \cite{oliveira2024propagation}.
+
+O framework proposto permite a priorização baseada em dados para a seleção de locais sentinela, levando em conta a cobertura de mobilidade desejada, e pode ser adaptado por formuladores de políticas para considerar restrições locais como disponibilidade de recursos e infraestrutura \cite{oliveira2024ranking, oliveira2024improvements}. Embora a previsão do local e momento exatos da emergência de um novo patógeno seja uma tarefa desafiadora, nosso modelo considera cada cidade brasileira como uma fonte potencial de surto, aumentando as chances de detecção precoce e fornecendo orientação sobre como responder a um novo patógeno \cite{oliveira2024emerging}.
+
+A análise de mobilidade sazonal, com picos de voos no final da primavera e verão \cite{oliveira2024findings}, pode influenciar a estrutura da rede de transmissão e aprimorar a estratégia geral de vigilância \cite{oliveira2024improvements, inovacao2024modelagem}. A capacidade de identificar "hubs" ou "cidades-portal" de transmissão para a hanseníase, à semelhança do que foi feito para outras arboviroses \cite{inovacao2024modelagem, lima2022temporal}, será fundamental para direcionar intervenções de saúde pública em locais de alta conectividade \cite{inovacao2024modelagem}. Por exemplo, 765 (53,6\%) dos 1426 caminhos que partem de Manaus têm o estado de São Paulo como destino inicial, indicando sua importância como hub \cite{oliveira2024manaos}.
+
+É importante reconhecer as limitações, como o impacto potencial dos dados genômicos nas avaliações filogenômicas e a necessidade de incluir variáveis que influenciam a seleção de cidades como locais de detecção precoce, tais como prioridades de saúde locais e características que favorecem a emergência de patógenos específicos \cite{oliveira2024improvements}. A pesquisa em \textit{big data} em saúde ainda levanta preocupações significativas com a privacidade e o risco de reidentificação de indivíduos, especialmente com dados sensíveis de doenças estigmatizadas como a hanseníase \cite{inovacao2024desafios, mooney2018big, saldanha2021vinculacao}. Portanto, uma discussão ética robusta e a aplicação de técnicas de preservação da privacidade são imperativas \cite{inovacao2024desafios, mooney2018big, saldanha2021conservadorismo}. A complexidade estrutural dos dados, sua variedade e o poder computacional necessário para analisá-los integralmente são o cerne da ciência de dados \cite{saldanha2021definicao}, o que reforça a necessidade de equipes interdisciplinares \cite{saldanha2021nesse, tang2021fields}.
+
+\section{Conclusão}
+Este artigo apresenta uma abordagem metodológica para modelagem e predição espaço-temporal da hanseníase no Brasil, combinando extensos dados de mobilidade humana com técnicas avançadas de estatística computacional e aprendizado de máquina. A construção de uma rede de mobilidade baseada em grafos e a aplicação do algoritmo \texttt{Ford--Fulkerson} permitiram a identificação estratégica de locais sentinela com alta cobertura de mobilidade, comprovada pela validação com dados da pandemia de SARS-CoV-2.
+
+A integração de modelos preditivos como \texttt{RNNs} e \texttt{GRUs}, e potencialmente modelos híbridos, oferece a capacidade de compreender e prever as dinâmicas complexas de transmissão da hanseníase, identificando "cidades-portal" críticas para a disseminação da doença. Essa abordagem representa um avanço significativo na capacidade do Brasil de fortalecer sua rede de vigilância epidemiológica, permitindo uma detecção mais precoce de surtos e uma resposta mais ágil e direcionada. Ao otimizar a localização dos locais sentinela com base em padrões reais de mobilidade, é possível maximizar a eficiência dos recursos e, consequentemente, reduzir o impacto da hanseníase como problema de saúde pública, alinhando-se aos objetivos de eliminação propostos pela OMS \cite{who2021zero, who2016global_strategy}.
+
+\section*{Agradecimentos}
+Este estudo é parte da iniciativa do Sistema de Alerta Precoce de Surtos com Potencial Pandêmico, em desenvolvimento pela Fundação Oswaldo Cruz (Fiocruz) e pela Universidade Federal do Rio de Janeiro, com apoio financeiro da Health Initiative da Fundação Rockefeller (concessão 2023-PPI-007) \cite{oliveira2024acknowledgments}.
+
+\section*{Conflito de Interesses}
+Os autores declaram não haver conflitos de interesse.
+
+\section*{Disponibilidade de Dados}
+Os dados de mobilidade utilizados neste estudo são de domínio público, provenientes do Instituto Brasileiro de Geografia e Estatística (IBGE) \cite{oliveira2024summary, oliveira2024data, brasil2017hanseniase}, Agência Nacional de Aviação Civil (ANAC) \cite{oliveira2024summary, oliveira2024transport}, e Confederação Nacional do Transporte (CNT) \cite{oliveira2024summary, oliveira2024transport}. Os dados genômicos do SARS-CoV-2 foram obtidos de estudos publicados e da Global Initiative on Sharing All Influenza Data (GISAID) \cite{oliveira2024genetic, oliveira2024transport, candido2020evolution, naveca2021covid}.
+
+\bibliographystyle{elsarticle-num}
+\bibliography{bibliografia}
+
+\end{document}
+

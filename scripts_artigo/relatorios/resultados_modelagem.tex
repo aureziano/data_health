@@ -1,0 +1,41 @@
+% Tabela 1: Hiperparâmetros
+\begin{table}[H]
+\centering
+\caption{Hiperparâmetros Ótimos Selecionados (LightGBM + SMOTE)}
+\label{tab:lgbm_params}
+\small
+\begin{tabular}{lr}
+\toprule
+ & Valor \\
+\midrule
+num_leaves & 64.000000 \\
+n_estimators & 100.000000 \\
+learning_rate & 0.050000 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% Tabela 2: Métricas
+\begin{table}[H]
+\centering
+\caption{Métricas de Avaliação Detalhadas por Classe (LightGBM + SMOTE)}
+\label{tab:lgbm_metrics}
+\small
+\begin{tabular}{lrrrr}
+\toprule
+ & precision & recall & f1-score & support \\
+\midrule
+1 & 1.000 & 1.000 & 1.000 & 53181.000 \\
+2 & 1.000 & 1.000 & 1.000 & 785.000 \\
+3 & 1.000 & 1.000 & 1.000 & 1874.000 \\
+4 & 1.000 & 1.000 & 1.000 & 1135.000 \\
+5 & 0.000 & 0.000 & 0.000 & 21.000 \\
+6 & 1.000 & 1.000 & 1.000 & 857.000 \\
+7 & 1.000 & 0.999 & 1.000 & 3313.000 \\
+8 & 1.000 & 1.000 & 1.000 & 778.000 \\
+9 & 0.000 & 0.000 & 0.000 & 2.000 \\
+macro avg & 0.778 & 0.778 & 0.778 & 61946.000 \\
+weighted avg & 0.999 & 0.999 & 0.999 & 61946.000 \\
+\bottomrule
+\end{tabular}
+\end{table}

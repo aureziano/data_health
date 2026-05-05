@@ -1,0 +1,15 @@
+shiny
+shinywidgets
+plotly
+joblib
+pandas
+numpy
+lightgbm==4.6.0
+matplotlib
+faicons
+scikit-learn==1.8.0
+statsmodels
+umap-learn
+scipy
+libsass
+xgboost==3.2.0

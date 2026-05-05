@@ -51,7 +51,8 @@ dados_completos.head()
 data_atual = datetime.now().strftime('%d_%m_%Y')
 nome_arquivo = f"HANSENIASE_TOTAL_{data_atual}.csv"
 
-path_hans = os.path.join(".\\","data", "HANS", nome_arquivo)
+path_hans = os.path.join(".", "data", "HANSENIASE", nome_arquivo)
+os.makedirs(os.path.dirname(path_hans), exist_ok=True)
 
 # Salvar o DataFrame consolidado
 dados_completos.to_csv(path_hans, 
@@ -60,7 +61,7 @@ dados_completos.to_csv(path_hans,
 
 print(f"Arquivo salvo com sucesso: {nome_arquivo}")
 print(f"Total de registros: {len(dados_completos):,}")
-print(f"Local: {os.path.abspath(nome_arquivo)}")
+print(f"Local: {os.path.abspath(path_hans)}")
 
 
 print("-----------------------------------PROCESSO DE CONVERSÃO FINALIZADO---------------------------")

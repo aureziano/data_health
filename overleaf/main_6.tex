@@ -1,0 +1,216 @@
+\documentclass[12pt,openright,oneside,a4paper,brazil]{abntex2}
+
+% Pacotes básicos
+\usepackage[utf8]{inputenc}
+\usepackage{fontenc}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{mdframed} % Para destacar os prompts
+\usepackage{hyperref}
+\usepackage[alf]{abntex2cite} % Citações padrão ABNT (AUTOR, Ano)
+
+% Informações de capa
+\titulo{Modelagem Preditiva da Incapacidade Funcional Utilizando DATASUS e Machine Learning}
+\autor{Aureziano Faria de Oliveira}
+\local{Vitória-ES}
+\data{2026}
+\orientador{Nome do Orientador}
+\instituicao{Nome da Universidade \par Programa de Pós-Graduação}
+\tipotrabalho{Dissertação (Mestrado)}
+\preambulo{Dissertação apresentada ao Programa de Pós-Graduação como requisito parcial para obtenção do título de Mestre.}
+
+\begin{document}
+
+\imprimircapa
+\imprimirfolhaderosto
+
+% Sumário
+\pdfbookmark{\contentsname}{toc}
+\tableofcontents*
+\cleardoublepage
+
+\textual
+
+% ==========================================================
+% CAPÍTULO 1
+% ==========================================================
+\chapter{Introdução}
+
+A fundamentação de uma dissertação sobre modelagem preditiva em saúde pública requer o estabelecimento inequívoco da urgência do problema biológico e social, delineando o impacto sistêmico da incapacidade funcional e a necessidade imperativa de inovação metodológica para sua análise prospectiva. A introdução deve conduzir o leitor desde a macroescala do envelhecimento populacional até a formulação dos objetivos computacionais da pesquisa.
+
+\section{Motivação}
+O envelhecimento populacional global é um fenômeno demográfico incontornável que concorre diretamente para o aumento exponencial da prevalência de doenças crônicas não transmissíveis e, consequentemente, da incapacidade funcional em larga escala \cite{ref1}. A incapacidade funcional transcende a mera presença de morbidades isoladas; ela é definida clínica e sociologicamente como a dificuldade, inabilidade ou impossibilidade de desempenhar atividades da vida cotidiana \cite{ref2, ref3}. Tais atividades são tipicamente estratificadas em Atividades Básicas de Vida Diária (ABVD), intrinsecamente ligadas à sobrevivência imediata e autocuidado (como alimentar-se e higienizar-se), e Atividades Instrumentais de Vida Diária (AIVD), ligadas à participação autônoma e complexa na sociedade (como gerir finanças e utilizar transporte) \cite{ref2, ref3}. Modelagens teóricas baseadas em equações estruturais demonstram que o declínio funcional obedece a uma progressão hierárquica, onde a fragilidade clínica, o comportamento sedentário e a sintomatologia depressiva atuam como precursores diretos da perda inicial de autonomia instrumental, culminando na dependência básica \cite{ref4}. 
+
+No cenário brasileiro, as estatísticas são alarmantes. As estimativas consolidadas pela Pesquisa Nacional de Saúde (PNS) de 2019 apontam que mais de 17,3 milhões de pessoas vivem com algum tipo de deficiência ou limitação funcional significativa \cite{ref5}. A prevalência geral de algum grau de deficiência atinge 58,3\% da população idosa, sendo que as incapacidades de grau moderado a severo respondem por 24,1\% deste contingente \cite{ref6}. O impacto desta condição não é distribuído de forma homogênea; as limitações funcionais afetam desproporcionalmente o sexo feminino (27,9\%), indivíduos desempregados ou inativos (28,4\%), populações com rendimento de até um salário mínimo (30,6\%) e extratos com menor nível de escolaridade (28,7\%) \cite{ref6, ref7}. A carga de comorbidade atua como um catalisador desta deterioração, com a razão de chance (odds ratio) de limitações funcionais sendo 4,5 vezes maior entre indivíduos com três ou mais comorbidades preexistentes \cite{ref6}. Este panorama epidemiológico configura a incapacidade funcional como um fenômeno fortemente mediado por determinantes sociais da saúde, exigindo ferramentas preditivas capazes de capturar essa interseccionalidade.
+
+\section{Objetivos}
+O estabelecimento de objetivos metodológicos precisos orienta toda a arquitetura do modelo preditivo e a esteira de processamento de dados. O objetivo geral desta pesquisa recai sobre o desenvolvimento, a otimização e a validação de modelos preditivos multivariados baseados em algoritmos de Machine Learning para estimar o risco e a progressão da incapacidade funcional na população brasileira, valendo-se da integração retrospectiva de bases de dados secundárias do Sistema Único de Saúde (DATASUS) e do IBGE.
+
+Para a consecução do objetivo geral, estabelecem-se os seguintes objetivos específicos direcionados à ciência de dados:
+O primeiro objetivo específico compreende o mapeamento sistemático, a extração estruturada e a harmonização de variáveis sociodemográficas, clínicas e de desfecho funcional disponíveis nos múltiplos subsistemas do DATASUS (como SIH/SUS e SIA/SUS) e nas malhas censitárias do IBGE \cite{ref8}. O segundo objetivo foca na execução e avaliação de técnicas de relacionamento de dados (linkage determinístico e probabilístico) para a construção de um repositório unificado, seguido da aplicação rigorosa de técnicas de engenharia de atributos (feature engineering) para tratamento de ruídos e dados faltantes \cite{ref9}. O terceiro objetivo abrange a avaliação comparativa sistemática do desempenho de múltiplos algoritmos de aprendizado de máquina (englobando modelos lineares regularizados, métodos de ensemble baseados em árvores e arquiteturas de Deep Learning) na tarefa de classificação do risco de incapacidade \cite{ref10, ref11}. O quarto objetivo busca a extração de explicabilidade clínica dos modelos preditivos, identificando os fatores e determinantes mais influentes na trajetória de incapacidade através de métodos avançados de interpretabilidade algorítmica (Explainable AI) \cite{ref11}.
+
+\section{Justificativa e Estado da Arte}
+A adoção de técnicas de Machine Learning na análise de dados secundários de saúde tem se consolidado como uma alternativa metodológica robusta aos modelos de inferência estatística tradicionais. Essa transição justifica-se fundamentalmente pela capacidade superior dos algoritmos de inteligência artificial em modelar interações não lineares de altíssima complexidade em espaços latentes multidimensionais, uma característica intrínseca às bases de dados de registros eletrônicos de saúde \cite{ref12, ref13}. O estado da arte da pesquisa epidemiológica demonstra um interesse crescente e resultados promissores no uso de algoritmos preditivos na saúde pública brasileira. 
+
+Investigações recentes utilizando dados longitudinais de coortes estruturadas, como o Estudo Longitudinal da Saúde dos Idosos Brasileiros (ELSI-Brasil) e o estudo Saúde, Bem-estar e Envelhecimento (SABE), evidenciaram de forma contundente o potencial do aprendizado de máquina para predizer desfechos adversos como mortalidade e declínio funcional severo \cite{ref10, ref14, ref15}. Nestas pesquisas, a implementação de algoritmos como Redes Neurais Artificiais e Regressão Logística Penalizada alcançou Áreas Sob a Curva ROC (AUC-ROC) consistentemente superiores a 0,70 \cite{ref10}. Além disso, abordagens baseadas em árvores de decisão otimizadas por gradiente, notoriamente o algoritmo XGBoost (Extreme Gradient Boosting), provaram ser substancialmente superiores na detecção de riscos ao atingir métricas de AUC de 0,803 e precisão de 0,757 em estudos asiáticos equivalentes (CHARLS), provendo forte explicabilidade através da identificação de preditores primários como força de preensão, exacerbação de sintomas depressivos e idade avançada \cite{ref11}. 
+
+Apesar da consolidação desses avanços metodológicos em estudos de coorte fechados e estritamente controlados, persiste uma lacuna científica e gerencial significativa no ecossistema brasileiro. Existe uma escassez de aplicações destas tecnologias em escala nacional utilizando os registros administrativos massivos, contínuos e abertos do DATASUS integrados a dados demográficos, o que configura uma justificativa metodológica sólida para a presente dissertação. A predição em larga escala baseada em dados reais e imperfeitos do SUS pode revolucionar a forma como o Estado aloca recursos preventivos e dispositivos de assistência.
+
+\section{Contribuições Científicas}
+A pesquisa propõe contribuições de natureza teórica, metodológica e aplicada de imenso valor para a saúde coletiva. Sob a ótica teórica, o estudo avança na compreensão da etiologia sistêmica da incapacidade funcional no Brasil, elucidando como fatores socioeconômicos macrorregionais interagem de forma sinérgica e não linear com o histórico clínico longitudinal do indivíduo. Do ponto de vista prático e tecnológico, a dissertação fornecerá um framework analítico, uma arquitetura de dados reproduzível e um modelo computacional treinado que possui potencial para ser integrado futuramente a ferramentas de gestão em saúde digital (e-SUS). Tais ferramentas permitirão apoiar a tomada de decisão clínica, a estratificação preditiva de risco em nível populacional e a alocação otimizada de recursos em unidades de atenção primária e centros de reabilitação \cite{ref16, ref17}. Como corolário, o modelo preditivo pode atuar como um sistema de triagem algorítmica, sinalizando pacientes de alto risco que se beneficiariam de intervenções terapêuticas profiláticas, a exemplo do uso de dispositivos robóticos de marcha supervisionada e ambientes de realidade mista projetados para mitigação do declínio cinemático \cite{ref18}.
+
+\section{Organização do Documento}
+A estrutura argumentativa e experimental da dissertação será dividida em seis capítulos encadeados. O Capítulo 1 introduz a fundamentação teórica, a motivação epidemiológica e os objetivos computacionais do escopo. O Capítulo 2 discute a convergência teórico-metodológica entre a teoria da classificação de funcionalidade, as variáveis brutas disponíveis nos subsistemas do DATASUS e IBGE, além de detalhar exaustivamente as estratégias de relacionamento de bases e a engenharia de atributos. O Capítulo 3 dedica-se à análise exploratória espacial e estatística, revelando padrões latentes. O Capítulo 4 detalha o cerne computacional: a seleção, o treinamento e a avaliação de algoritmos preditivos base utilizando métricas avançadas. O Capítulo 5 introduz a sintonia fina de hiperparâmetros e a exploração de arquiteturas de Deep Learning para dados tabulares. O Capítulo 6, por fim, sintetiza as implicações dos achados para o SUS, discorre sobre as limitações inerentes à qualidade dos dados secundários e propõe direcionamentos para inovações em políticas públicas.
+
+\begin{mdframed}[backgroundcolor=gray!10]
+\textbf{PROMPT PARA O CAPÍTULO 1:} Atue como um pesquisador sênior e cientista de dados atuante na intersecção entre epidemiologia e inteligência artificial. Escreva o "Capítulo 1: Introdução" da minha dissertação de mestrado focada na predição de incapacidade funcional utilizando dados do DATASUS e Machine Learning. A escrita deve ser em prosa fluida, contínua, com transições coesas... (Cole aqui o restante do prompt).
+\end{mdframed}
+
+% ==========================================================
+% CAPÍTULO 2
+% ==========================================================
+\chapter{Variáveis no DATASUS vs Teoria, Engenharia de Features e Integração com IBGE}
+
+A formulação de um modelo preditivo de alta precisão em saúde coletiva depende intrinsecamente da qualidade, da representatividade populacional e do rigor no tratamento dos dados de entrada. Este capítulo disseca a transposição de complexos construtos clínicos e sociológicos em variáveis computáveis, além de detalhar a arquitetura de processamento e fusão de dados.
+
+\section{Fundamentação Teórica e a Classificação Internacional de Funcionalidade (CIF)}
+A Organização Mundial da Saúde (OMS), mediante a formulação da Classificação Internacional de Funcionalidade, Incapacidade e Saúde (CIF), promoveu uma mudança de paradigma conceitual. A incapacidade deixou de ser interpretada como um atributo biológico estático do indivíduo para ser compreendida como o resultado de uma interação dinâmica, bidirecional e sistêmica entre condições de saúde intrínsecas e fatores contextuais \cite{ref19}. Estes fatores contextuais englobam tanto o ambiente físico quanto componentes socioeconômicos subjacentes \cite{ref19, ref20}. Dessa forma, o mapeamento do declínio funcional em bases de dados exige que o cientista de dados capture múltiplas dimensões do paciente. Mapear essa teia de interdependências nos sistemas gerenciais do DATASUS constitui um desafio metodológico monumental, exigindo a seleção cuidadosa de variáveis que atuem como proxies válidos \cite{ref19}.
+
+\section{Extração de Variáveis nos Sistemas de Informação em Saúde (DATASUS)}
+O ecossistema do DATASUS oferece um repositório de dados extremamente rico, porém estruturalmente fragmentado e frequentemente assíncrono. Para capturar longitudinalmente a trajetória que culmina na incapacidade, a arquitetura de dados deve extrair e correlacionar registros provenientes de múltiplos subsistemas independentes \cite{ref8, ref21}. O SIH/SUS é a principal fonte de dados sobre a morbidade hospitalar grave \cite{ref3, ref8}. O SIA/SUS é indispensável para o mapeamento das intervenções de médio prazo e reabilitação, sendo viável identificar o fornecimento estatal de tecnologias assistivas \cite{ref8, ref9}. Para a captura da linha de base de saúde da comunidade, a integração com o SISAB via prontuários eletrônicos do e-SUS possibilita a avaliação do acompanhamento longitudinal de condições crônicas \cite{ref8, ref17}. Finalmente, o SIM fornece as bases para censurar a análise de sobrevida \cite{ref21}.
+
+\section{Integração com o IBGE e Técnicas de Relacionamento de Bases (Linkage)}
+A literatura epidemiológica estabelece de maneira incontestável que fatores sociodemográficos exercem peso preditivo fundamental no risco de declínio funcional \cite{ref1, ref6, ref7}. Tais indicadores populacionais são rotineiramente consolidados pelo IBGE nos microdados \cite{ref5, ref8, ref22}. Para viabilizar análises de Machine Learning eficientes, a técnica de relacionamento de fontes de dados (Record Linkage) é empregada como o mecanismo central para fundir o histórico clínico do DATASUS com os indicadores sociodemográficos do IBGE \cite{ref9, ref23}. O linkage probabilístico utiliza formulações estocásticas em softwares especializados, como o Reclink III, para computar escores de similaridade entre os registros \cite{ref9, ref24}. Filtros algorítmicos avançados podem ser acoplados a esta etapa para acelerar o cruzamento em bases com dezenas de milhões de linhas \cite{ref25}.
+
+\begin{table}[htb]
+\centering
+\caption{Mapeamento das variáveis do modelo CIF para o DATASUS/IBGE e as respectivas etapas de pré-processamento.}
+\label{tab:cif_datasus}
+\begin{tabular}{|p{4cm}|p{5.5cm}|p{5.5cm}|}
+\hline
+\textbf{Domínio Clínico Teórico (Modelo CIF/OMS)} & \textbf{Subsistema Base e Variáveis Extraídas (DATASUS / IBGE)} & \textbf{Estratégia de Processamento e Engenharia de Atributos} \\ \hline
+Funções e Estruturas Corporais (Déficits) & SIH/SUS: Frequência de internações com CID-10; Tempo médio de permanência. & Criação de features derivadas baseadas em contagem temporal. \\ \hline
+Fatores Ambientais e Contexto Socioeconômico & IBGE: Indicadores de renda média domiciliar per capita, taxa de escolarização. & Concatenação de features via linkage espacial e criação de Índice Otimizado (PCA). \\ \hline
+Atividade Funcional, Participação e Dependência & SIA/SUS e e-SUS: Registros longitudinais de dispensação de órteses, andadores ou cadeiras. & Geração de variável target indicando o grau progressivo de dependência. \\ \hline
+\end{tabular}
+\end{table}
+
+\section{Engenharia de Atributos (Feature Engineering) e Pré-Processamento}
+A heterogeneidade dimensional e as características ruidosas inerentes aos registros eletrônicos de saúde exigem o desenvolvimento de um pipeline exaustivo de engenharia de atributos prévio a qualquer tentativa de modelagem \cite{ref13, ref26, ref27}. A etapa primária consiste no tratamento rigoroso de dados faltantes (missing values) aplicando técnicas de imputação múltipla \cite{ref10, ref28}. Em seguida, procede-se com transformações de redimensionamento de escala utilizando a normalização estatística Min-Max \cite{ref29}. O cerne da engenharia de atributos reside na derivação de novas variáveis. A literatura aponta que indivíduos com três ou mais comorbidades possuem razão de chance significativamente ampliada para desenvolver severas limitações físicas \cite{ref6, ref30}. A tradução deste conhecimento biológico para o modelo ocorre através do mapeamento de centenas de códigos CID-10 únicos formulando a variável "Carga Ponderada de Comorbidade de Charlson" \cite{ref13, ref27}.
+
+\begin{mdframed}[backgroundcolor=gray!10]
+\textbf{PROMPT PARA O CAPÍTULO 2:} Assuma o papel de um Arquiteto de Dados Sênior e Epidemiologista Quantitativo. Escreva o "Capítulo 2: Bases de Dados, Variáveis e Engenharia de Atributos" da minha dissertação. A resposta deve ser integralmente em prosa acadêmica contínua... (Cole aqui o restante do prompt).
+\end{mdframed}
+
+% ==========================================================
+% CAPÍTULO 3
+% ==========================================================
+\chapter{Análise Exploratória das Variáveis e Elaboração do Dataset Final}
+
+A Análise Exploratória de Dados (EDA) figura como o alicerce empírico indispensável que precede qualquer fase de modelagem de aprendizado estatístico ou inteligência artificial em projetos de ciência de dados de saúde \cite{ref31, ref32, ref33}.
+
+\section{Abordagens Univariadas, Assimetrias e Distribuição Demográfica}
+A avaliação primária da qualidade dos dados exige a inspeção das distribuições individuais das variáveis de interesse. A construção de Histogramas, aliada à análise das Funções de Distribuição Cumulativa e dos gráficos de quantil-quantil (Q-Q plots), revela o perfil estrutural da população estudada \cite{ref31, ref32}. Ao plotar a variável de idade, espera-se observar uma distribuição exponencialmente assimétrica à esquerda \cite{ref4, ref7}. Adicionalmente, os diagramas de caixa (Boxplots) constituem ferramentas incontornáveis para a detecção isolada de valores atípicos (outliers) \cite{ref31, ref32}. Através de boxplots estratificados, evidencia-se as disparidades temporais nos ciclos de reabilitação entre os sexos biológicos \cite{ref6, ref7, ref34}.
+
+\section{Análise de Dependências, Correlação Bivariada e Multivariada}
+Compreender profundamente as estruturas de colinearidade e multicolinearidade é um pré-requisito que dita as decisões metodológicas. A geração visual de matrizes de correlação espaciais fornece um panorama elucidativo das associações sindrômicas \cite{ref12, ref31}. A análise bivariada frequentemente expõe fortes correlações estruturais e negativas entre índices agregados de privação socioeconômica e a métrica de autonomia funcional individual \cite{ref1, ref6, ref7}. 
+
+\begin{table}[htb]
+\centering
+\caption{Técnicas Exploratórias e seus Objetivos nos Dados do DATASUS}
+\label{tab:eda}
+\begin{tabular}{|p{4cm}|p{5cm}|p{6cm}|}
+\hline
+\textbf{Técnica Exploratória Utilizada} & \textbf{Métrica Visualizada e Objetivo Analítico} & \textbf{Aplicação no Contexto da Incapacidade (DATASUS/IBGE)} \\ \hline
+\textbf{Histogramas e Gráficos de Densidade} & Assimetria, Curtose e Distribuição. & Mapeamento da curva de envelhecimento populacional. \\ \hline
+\textbf{Diagramas de Caixa (Boxplots)} & Dispersão interquartil e Outliers. & Comparação do tempo total de internação no SIH/SUS. \\ \hline
+\textbf{Matrizes de Correlação (Heatmaps)} & Intensidade da dependência multivariada. & Identificação de multicolinearidade entre determinantes sociais e CID-10. \\ \hline
+\textbf{Visualização de Dados Ausentes} & Padrões estocásticos ou sistemáticos. & Detecção de variáveis com subnotificação crônica. \\ \hline
+\end{tabular}
+\end{table}
+
+A avaliação exploratória de dados faltantes constitui um ramo independente e crítico da EDA. Visualizações gráficas específicas elucidam se os registros ignorados obedecem a um padrão de Falha Completamente Aleatória (MCAR) ou se as omissões estão sistematicamente correlacionadas a grupos vulneráveis \cite{ref12}.
+
+\section{Mapeamento Geoespacial Epidemiológico e Índices de Privação}
+Dadas as proporções continentais do Brasil, a exploração da dimensão espacial é um componente irrenunciável \cite{ref31}. A integração com shapefiles do IBGE propicia a construção de sofisticados mapas coropléticos de incidência \cite{ref2, ref24}. Tais representações espaciais são utilizadas para sobrepor as taxas estaduais de internações aos estratos do Índice Brasileiro de Privação (IBP), revelando a formação de bolsões epidemiológicos de alta vulnerabilidade.
+
+\begin{mdframed}[backgroundcolor=gray!10]
+\textbf{PROMPT PARA O CAPÍTULO 3:} Aja como um Cientista de Dados Sênior especializado em Health Analytics. Escreva o "Capítulo 3: Análise Exploratória de Dados (EDA)" da minha dissertação sobre incapacidade e DATASUS. O texto deve ser inteiramente redigido em prosa contínua... (Cole aqui o restante do prompt).
+\end{mdframed}
+
+% ==========================================================
+% CAPÍTULO 4
+% ==========================================================
+\chapter{Seleção de Algoritmos para Modelagem de Dados}
+
+Este capítulo descerra a espinha dorsal metodológica computacional da pesquisa, dedicada à formulação arquitetural do aprendizado de máquina \cite{ref10, ref14, ref26}.
+
+\section{Estratégia de Partição de Dados e Escopo de Algoritmos Base}
+O protocolo de excelência preditiva exige a divisão estrita do conjunto de registros em subconjuntos de treinamento e teste, adotando-se uma alocação de 70\% a 80\% para aprendizagem \cite{ref10}. Esta divisão deve seguir imperativamente o paradigma de estratificação proporcional (Stratified split) para lidar com o desbalanceamento de classes.
+
+Para modelar as complexas interações não lineares \cite{ref13}, uma pluralidade de algoritmos deve ser submetida a rigoroso escrutínio:
+A Regressão Logística Penalizada (Lasso/Ridge) é frequentemente implantada como baseline \cite{ref10, ref26}. Variantes como o LASSO executam automaticamente a seleção de características embutida \cite{ref10, ref11}. Máquinas de Vetores de Suporte (SVM) delineiam hiperplanos de separação ótimos \cite{ref25, ref35}. Contudo, a literatura aponta para a superioridade quantitativa das arquiteturas baseadas em agrupamento de Árvores de Decisão, notadamente o XGBoost (Extreme Gradient Boosting), que demonstrou maestria incomparável ao bater métricas de linhas de base em estudos longitudinais como o CHARLS (AUC 0,803) \cite{ref11, ref36}.
+
+\begin{table}[htb]
+\centering
+\caption{Adequação Biológica e Arquitetural dos Algoritmos Avaliados}
+\label{tab:algoritmos}
+\begin{tabular}{|p{3.5cm}|p{3.5cm}|p{4cm}|p{3.5cm}|}
+\hline
+\textbf{Família Algorítmica Avaliada} & \textbf{Fundamento Matemático} & \textbf{Vantagem Estratégica no DATASUS} & \textbf{Limitações Inerentes} \\ \hline
+\textbf{Regressão Logística Penalizada} & Maximização da função com penalidade. & Interpretabilidade direta (Odds Ratios). \cite{ref10, ref26} & Baixa capacidade para interações não-lineares. \\ \hline
+\textbf{SVM} & Mapeamento em hiperplanos. & Excelência na classificação complexa. \cite{ref25, ref35} & Elevado custo computacional. \\ \hline
+\textbf{Ensembles (XGBoost)} & Construção iterativa corretiva. & Imunidade a ruídos e altíssima acurácia. \cite{ref10, ref11, ref13, ref36} & Comportamento "caixa-preta". \\ \hline
+\end{tabular}
+\end{table}
+
+\section{Métricas de Avaliação Qualitativa do Risco Multidimensional}
+Focar a validação apenas na Acurácia global gera ilusões perigosas em dados desbalanceados. A métrica norteadora adotada é a mensuração da Curva ROC combinada com a AUC \cite{ref10, ref14, ref37}. O foco recai na maximização da Sensibilidade para identificar o risco latente \cite{ref11}, balanceada pela Especificidade para controle orçamentário e logístico do SUS \cite{ref10, ref11, ref33}. Em predições escalares contínuas, Erro Quadrático Médio da Raiz (RMSE) e Erro Médio Absoluto (MAE) fornecem o desvio padrão prático \cite{ref13}.
+
+\section{Interpretabilidade Clínica e Inteligência Artificial Explicável (XAI)}
+Os desenvolvedores impulsionam a utilização dos valores metodológicos SHAP (SHapley Additive exPlanations) no eixo de Interpretabilidade \cite{ref11, ref26}. O arranjo SHAP extrai do seio de modelos ramificados a quantificação percentual marginal direcional que cada fator exerceu na predição \cite{ref11}.
+
+\begin{mdframed}[backgroundcolor=gray!10]
+\textbf{PROMPT PARA O CAPÍTULO 4:} Incorpore a mentalidade e o léxico técnico de um Especialista em Machine Learning Aplicado à Saúde. Elabore e escreva integralmente o "Capítulo 4: Seleção de Algoritmos..." (Cole aqui o restante do prompt).
+\end{mdframed}
+
+% ==========================================================
+% CAPÍTULO 5
+% ==========================================================
+\chapter{Aprimoramento do Modelo e Deep Learning (Opcional Avançado)}
+
+A perseguição contínua para cruzar os limites teóricos e empíricos superiores clama invariavelmente pela otimização rigorosa nos contornos multidimensionais de hiperparâmetros (Hyperparameter Tuning) e pela inclusão da subcategoria da aprendizagem profunda (Deep Learning).
+
+\section{Tuning Estruturado e Matrizes de Validação Cruzada K-Fold}
+A consagração de uma robustez definitiva dos algoritmos implementados requer a sintonia fina para evitar overfitting e underfitting \cite{ref10}. As melhores práticas repousam no uso metódico da Validação Cruzada (10-fold cross-validation), que mitiga as margens casuais isoladas de avaliações \cite{ref10, ref14}. É imperativo assegurar que não ocorra Data Leakage durante o ciclo \cite{ref28}.
+
+\section{Progressões em Redes Neurais Artificiais (Deep Learning)}
+Configurações modulares e interligadas em blocos da clássica subestrutura das Redes Perceptron de Múltiplas Camadas (MLP) avaliam na teoria o ápice empírico superior no processamento analítico interligado das características e preditores latentes \cite{ref26, ref38, ref39, ref40}. O uso no domínio do treinamento neural abstrato envolvendo dados tabulares (Deep Tabular Learning) ostenta um desafio imenso, exigindo camadas regulatórias inibitórias avaliativas de Dropout estocásticas mescladas a Batch Normalization \cite{ref41, ref43}.
+
+\begin{mdframed}[backgroundcolor=gray!10]
+\textbf{PROMPT PARA O CAPÍTULO 5:} Incorpore o arcabouço cognitivo, tom professoral e vocabulário técnico rigoroso empregado por um pesquisador doutor titular publicando em periódicos internacionais... (Cole aqui o restante do prompt).
+\end{mdframed}
+
+% ==========================================================
+% CAPÍTULO 6
+% ==========================================================
+\chapter{Conclusão}
+
+A tradução empírica de métricas matemáticas abstratas para o tecido vibrante da política pública do SUS representa o propósito ético final e a justificativa sociológica central motivadora da intersecção entre o big data e a saúde coletiva.
+
+\section{Implicações Transformadoras nas Políticas Públicas}
+O processamento computacional ao combinar o histórico clínico individual com o mapeamento territorial da privação social \cite{ref4, ref13} entrega à matriz tecnológica do SUS a ferramenta de estratificação inovadora. Ao detectar o declínio iminente, pode-se iniciar antecipadamente protocolos focais rigorosos na unidade básica. A exemplo logístico proativo da formulação de programas com dispositivos inovadores como andadores inteligentes de reabilitação dotados de robótica e feedback de realidade mista visando a profilaxia motora \cite{ref18}.
+
+\section{Limitações Inerentes e Oportunidades Estratégicas}
+A construção não é isenta de vulnerabilidades de ruídos ou aos imperativos atrelados de subnotificações \cite{ref13}. As instabilidades na malha de processamentos dos laudos faturados do SIH/SIA e a heterogeneidade da rotina geram viés no modelo \cite{ref27}, limitando temporariamente o deployment em "tempo real" nacional \cite{ref44}. Contudo, o êxito avaliativo obtido pavimenta o roteiro base processual atrelado no traçado relacional de uso focado na consolidação estrutural da malha unificada do e-SUS e Prontuários Eletrônicos em todo o Brasil, passando da atuação paliativa retroativa para o fomento contínuo da medicina preditiva e profilática \cite{ref19, ref45}.
+
+\begin{mdframed}[backgroundcolor=gray!10]
+\textbf{PROMPT PARA O CAPÍTULO 6:} Adote a persona, a autoridade argumentativa irrefutável e o léxico densamente acadêmico característicos de um Doutor Sênior em Saúde Coletiva e Epidemiologia... (Cole aqui o restante do prompt).
+\end{mdframed}
+
+% Referências
+\bibliography{references_6}
+
+\end{document}

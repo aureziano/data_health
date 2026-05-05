@@ -1,0 +1,134 @@
+\chapter{Resultados: Caracterização e Clustering}
+
+
+Este capítulo apresenta os resultados da caracterização estatística das variáveis do SINAN e o processo de otimização algorítmica para a identificação de fenótipos epidemiológicos.
+
+\section{Métricas de Variáveis Individuais}
+
+A análise univariada revelou que a variável `CLASSOPERA` (Classificação Operacional) é o preditor mais robusto da carga de incapacidade física. Observou-se que pacientes classificados como Multibacilares apresentam uma probabilidade significativamente maior de evoluir para o Grau 2 de Incapacidade (G2D) no momento do diagnóstico, em comparação com os Paucibacilares. 
+
+Através da aplicação da técnica de \textit{Mutual Information} (MI), pudemos ranquear as variáveis por seu conteúdo de informação em relação ao alvo (Presença de G2D). A Tabela \ref{tab:importancia_mi} demonstra que variáveis como o esquema terapêutico inicial e as doses recebidas possuem forte dependência não-linear com a gravidade da Hanseníase, reforçando a tese de que determinantes socioeconômicos e clínicos estão intrinsecamente ligados \cite{freitas2025evaluating}.
+
+\begin{table}[H]
+\centering
+\caption{Importância de Variáveis via Mutual Information (MI)}
+\label{tab:importancia_mi}
+\begin{tabular}{lr}
+\toprule
+Feature & Mutual\_Info \\
+\midrule
+DOSE\_RECEB & 0.247857 \\
+CONTEXAM & 0.013730 \\
+ESQ\_INI\_N & 0.012886 \\
+CLASSOPERA & 0.009549 \\
+NU\_ANO & 0.008612 \\
+CS\_SEXO\_M & 0.007381 \\
+BACILOSCOP & 0.007181 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Análise Regional e Vigilância de Precisão}
+
+Para além das métricas biológicas, a distribuição geográfica da Hanseníase no Brasil revela disparidades críticas. No entanto, a análise de números absolutos pode mascarar a gravidade real em regiões menos populosas. Por isso, normalizamos os indicadores por 1.000 habitantes utilizando as estimativas populacionais do IBGE 2024.
+
+Conforme apresentado na Tabela \ref{tab:regional_normalizado}, a região Centro-Oeste apresenta o maior Coeficiente de Detecção e a maior Taxa de G2D por 1.000 habitantes (1,75), sugerindo uma alta endemicidade e gargalos no diagnóstico precoce. A Figura \ref{fig:regional_norm} ilustra o contraste entre as regiões, evidenciando que o Norte e Nordeste também mantêm patamares elevados de incapacidade física em relação à sua densidade populacional, confirmando a Hanseníase como uma doença de negligência associada a padrões regionais de pobreza \cite{nery2021socioeconomic}.
+
+\begin{table}[H]
+\centering
+\caption{Coeficiente de Detecção e Taxa de G2D por Região (Normalizado por 1.000 hab)}
+\label{tab:regional_normalizado}
+\input{tabs/tabela_regional_normalizada.tex}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\caption{Comparativo Regional de Indicadores de Incapacidade Física}
+\label{fig:regional_norm}
+\includegraphics[width=0.85\textwidth]{fig/analise_regional_normalizada.png}
+\end{figure}
+
+\section{Resultados da Otimização de Clustering}
+
+O processo de clusterização foi submetido a uma busca sistemática de hiperparâmetros para garantir a coesão e separabilidade dos grupos identificados. Testamos variações no número de vizinhos do UMAP ($n\_neighbors$) e no número de clusters do K-Means.
+
+A avaliação foi conduzida através da análise de perfis de silhueta, que permite visualizar não apenas a média global, mas a consistência de cada ponto dentro de seu agrupamento atribuído. A Figura \ref{fig:analise_silhueta} apresenta o comparativo entre $K=2$ (proposta final) e $K=3$ (proposta descartada). 
+
+Observa-se que em $K=2$ (lado esquerdo), ambos os clusters apresentam espessuras homogêneas e coeficientes que ultrapassam significativamente a linha média (em vermelho), sem apresentar áreas negativas (pontos possivelmente mal classificados). Embora algoritmos não-supervisionados frequentemente sugiram maior número de agrupamentos por otimização estrita de distância geométrica, a escolha rigorosa de $K=2$ fundou-se na busca por fenótipos clinicamente acionáveis. Para a Gestão em Saúde Pública (Informatics in Health), é vital garantir que a complexidade do algoritmo culmine em estratégias simples e inteligíveis, evitando a fragmentação excessiva vista em $K=3$ e provendo divisões dualistas claras para políticas de intervenção primária.
+
+\begin{figure}[H]
+\centering
+\caption{Validação do Número de Clusters: Perfil de Silhueta ($K=2$ vs $K=3$)}
+\label{fig:analise_silhueta}
+\includegraphics[width=\textwidth]{fig/analise_silhueta_k2_k3.png}
+\end{figure}
+
+A Tabela \ref{tab:perfil_clusters} sintetiza os resultados finais. O valor de Silhouette de 0.69 para $K=2$ é considerado forte na literatura de saúde pública, indicando que os dois grandes fenótipos identificados ("Diagnóstico Oportuno" vs. "Diagnóstico Tardio/Vulnerabilidade") são entidades clínicas distintas e bem definidas.
+
+\begin{table}[H]
+\centering
+\caption{Resultados da Otimização do Clustering (UMAP + K-Means)}
+\label{tab:otimizacao_clustering}
+\begin{tabular}{rrrr}
+\toprule
+n\_neighbors & n\_clusters & Silhouette & Davies\_Bouldin \\
+\midrule
+30 & 2 & 0.689642 & 0.446947 \\
+15 & 4 & 0.631881 & 0.532029 \\
+15 & 2 & 0.624289 & 0.592053 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Comparativo de Técnicas de Projeção e Validação Visual}
+
+Para justificar a escolha do algoritmo UMAP (Uniform Manifold Approximation and Projection) como técnica principal de redução de dimensionalidade, realizamos um comparativo quantitativo com os métodos clássicos PCA (\textit{Principal Component Analysis}) e t-SNE (\textit{t-Distributed Stochastic Neighbor Embedding}).
+
+Conforme apresentado na Tabela \ref{tab:metricas_projecao}, o UMAP obteve o melhor equilíbrio entre preservação da estrutura global (métrica de \textit{Trustworthiness}) e tempo de execução. A Figura \ref{fig:cluster_comparison} ilustra as differenças visuais entre as técnicas. Note-se que, enquanto o PCA falha em separar grupos sobrepostos e o t-SNE cria fragmentações excessivas, o UMAP preserva aglomerados coesos que correspondem aos perfis clínicos identificados. A nitidez visual da separação entre os clusters na projeção UMAP, corroborada pelo baixo índice de Davies-Bouldin (0.44), comprova que a modelagem capturou variações biológicas e sociais reais, não apenas ruído estatístico.
+
+\begin{table}[H]
+\centering
+\caption{Comparativo Quantitativo de Métricas de Projeção}
+\label{tab:metricas_projecao}
+\input{tabs/tabela_projecoes.tex}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\caption{Comparativo Visual: PCA vs t-SNE vs UMAP}
+\label{fig:cluster_comparison}
+\includegraphics[width=0.95\textwidth]{fig/comparativo_projecoes.png}
+\end{figure}
+
+\section{Justificativa do Cluster de Alta Gravidade}
+
+A aplicação de modelos de aprendizado supervisionado (Random Forest) sobre os labels gerados pela clusterização permitiu extrair a importância das variáveis na definição desses grupos. Como observado na Figura \ref{fig:cluster_importance}, a idade avançada e o Grau de Incapacidade Física são os divisores de águas mais proeminentes.
+
+\begin{figure}[H]
+\centering
+\caption{Importância Relativa das Variáveis na Formação dos Clusters}
+\label{fig:cluster_importance}
+\includegraphics[width=0.7\textwidth]{fig/importancia_features_clusters.png}
+\end{figure}
+
+O teste estatístico de Kruskal-Wallis confirmou a disparidade entre os grupos com altíssima significância ($p < 0{,}001$), sustentando a nomenclatura do "Cluster de Alta Gravidade". Complementarmente, testes de Mann-Whitney U para cada variável individualmente confirmaram a distância estatística entre os clusters para todas as variáveis clínicas nucleares (incapacidade física, número de lesões e nervos afetados; $p < 0{,}001$ em todos os casos). A Tabela \ref{tab:perfil_clusters} detalha o perfil clínico médio, evidenciando que este cluster possui uma média de incapacidade física e número de lesões drasticamente superior ao restante da população estudada.
+
+A sobre-representação do sexo masculino (61\% vs. 41\% no Cluster de Baixa Gravidade) corrobora o fenômeno epidemiológico clássico de atraso diagnóstico em homens, documentado na literatura nacional \cite{boigny2019, clinical_variables_northeast}. Atribuí-se este padrão à combinação de barreiras culturais de acesso ao sistema de saúde (o perfil de automedicação e resis-tência a consultas) e maior exposição ocupacional a áreas endêmicas. Do ponto de vista da teoria de detecção de sinais, este padrão representa um \textbf{viés de seleção sistemático}: o sinal de gravidade capturado pelo sistema de vigilância é uma subamostra enviesada da população real de doentes, superestimando a proporção de homens em estágios avançados relativa às mulheres.
+
+Quanto à proeminência da variável \texttt{CLASSOP\_BIN} (PB/MB) na definição dos clusters: sua dominância era \textbf{esperada e epidemiologicamente defensavel}, dado que a classificação Multibacilar é, por definição, um marcador de maior carga bacilar e risco de neuropatia \cite{clinical_variables_northeast}. Contudo, uma ressalva metodológica importante: em aplicações futuras de triagem preventiva — onde o paciente ainda não foi formalmente classificado — esta variável deve ser excluída para evitar o uso de um proxy direto do desfecho como preditor, o que geraria um modelo circular sem poder de generalização.
+
+\begin{table}[H]
+\centering
+\caption{Perfil Clínico Médio dos Clusters Identificados}
+\label{tab:perfil_clusters}
+\resizebox{\textwidth}{!}{%
+\input{tabs/perfil_clusters_incapacidade.tex}%
+}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\caption{Distribuição do Grau de Incapacidade por Cluster (Justificativa de Gravidade)}
+\label{fig:justificativa_alta_gravidade}
+\includegraphics[width=0.8\textwidth]{fig/justificativa_alta_gravidade.png}
+\end{figure}

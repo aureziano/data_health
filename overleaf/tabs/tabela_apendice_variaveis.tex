@@ -1,0 +1,51 @@
+% Tabela 1: Métricas Descritivas e Tratamento de Variáveis (completude e imputação)
+% Ancorado nas referências [210, 211, 213, 563, 564]
+\begin{tabular}{lrlll}
+\toprule
+Variavel & Missing(\%) & Outliers IQR(\%) & Metodo de Imputacao & Media/Moda \\
+\midrule
+CLASSOPERA & 0.120000 & 0.160000 & Mediana (Robust in Skewed) [210] & 1.670000 \\
+CS\_SEXO & 0.000000 & - & Moda (Categorical) [210] & M \\
+CS\_RACA & 7.890000 & 2.860000 & Mediana (Robust in Skewed) [210] & 3.040000 \\
+CS\_ESCOL\_N & 6.990000 & - & Moda (Categorical) [210] & 01 \\
+NU\_LESOES & 3.780000 & 8.150000 & Mediana (Robust in Skewed) [210] & 5.800000 \\
+NERVOSAFET & 46.710000 & 3.820000 & Mediana (Robust in Skewed) [210] & 1.580000 \\
+DOSE\_RECEB & 33.620000 & 1.590000 & Mediana (Robust in Skewed) [210] & 9.080000 \\
+\bottomrule
+\end{tabular}
+
+
+% Tabela 2: Análise de Variância (Kruskal-Wallis) com G2D
+% Justificando a escolha destas variáveis devido forte associação [254]
+\begin{tabular}{lrrl}
+\toprule
+Variavel & KW\_Stat & P\_Value & Associacao\_Significativa \\
+\midrule
+CLASSOPERA & 130.2427 & 0.0000 & Sim \\
+CS\_SEXO & 28.9440 & 0.0000 & Sim \\
+CS\_RACA & 84.8525 & 0.0000 & Sim \\
+CS\_ESCOL\_N & 297.6595 & 0.0000 & Sim \\
+NU\_LESOES & 373.4432 & 0.0000 & Sim \\
+NERVOSAFET & 193.1721 & 0.0000 & Sim \\
+DOSE\_RECEB & 388.7638 & 0.0000 & Sim \\
+\bottomrule
+\end{tabular}
+
+
+% Tabela 3: Importância via Mutual Information [360]
+\begin{tabular}{lr}
+\toprule
+Feature Encode & Mutual\_Info[360] \\
+\midrule
+CLASSOPERA & 0.0051 \\
+NU\_LESOES & 0.0044 \\
+DOSE\_RECEB & 0.0043 \\
+CS\_ESCOL\_N\_5 & 0.0043 \\
+CS\_ESCOL\_N\_1 & 0.0042 \\
+CS\_ESCOL\_N\_3 & 0.0037 \\
+CS\_ESCOL\_N\_02 & 0.0037 \\
+NERVOSAFET & 0.0036 \\
+CS\_ESCOL\_N\_2 & 0.0034 \\
+CS\_SEXO\_M & 0.0032 \\
+\bottomrule
+\end{tabular}

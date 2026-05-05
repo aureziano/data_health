@@ -1,0 +1,78 @@
+\chapter{Materiais e Métodos}
+
+
+A robustez da modelagem preditiva e da predição de séries temporais depende da qualidade e do tratamento criterioso das fontes de dados nacionais. Esta seção detalha o fluxo de engenharia de dados, desde a extração primária até a estruturação do dataset consolidado.
+
+\section{Fontes de Dados e Integração}
+
+O núcleo desta pesquisa utiliza o Sistema de Informação de Agravos de Notificação (SINAN), sob gestão do Departamento de Informática do SUS (DATASUS), que constitui a base oficial para a vigilância de doenças compulsórias no Brasil \cite{sinan_pinto}. A base consolidada \texttt{HANSENIASE\_TOTAL} abrange o histórico nacional de notificações e acompanhamento de casos.
+
+Adicionalmente, integramos indicadores demográficos provenientes do Instituto Brasileiro de Geografia e Estatística (IBGE), especificamente as estimativas populacionais anuais por município. O cruzamento ocorreu através do código de município padrão (\texttt{ID\_MUNICIP} de 6 ou 7 dígitos), permitindo o cálculo da densidade demográfica (hab/km²) — uma variável crucial para entender a pressão de transmissão em áreas urbanas adensadas.
+
+\textbf{Governança de dados e interoperabilidade histórica:} O código de municípios do IBGE sofreu emancipações e reclassificações ao longo do período 2001-2024. Para garantir a integridade do \textit{data linkage}, utilizou-se a tabela de correspondência histórica do IBGE (versão 2022), que mapeia códigos extintos para seus sucessores legais. Registros não resolvidos (< 0,3\% do total) foram associados à microrregiao da respectiva UF para preservar a consistência geoestatística. A pesquisa utiliza estritamente dados anonimizados de domínio público (\textit{Open Data}), eximindo-se da manipulação de quaisquer identificadores nominais ou rastreadores biográficos sensíveis. Esta blindagem garante conformidade ética integral com a Lei Geral de Proteção de Dados (LGPD — Lei 13.709/2018) e justifica a dispensa de escrutínio pelo sistema CEP/CONEP (Resolução CNS n.\textdegree{} 510/2016, Art. 1\textdegree{}, Inciso VI).
+
+\section{Engenharia de Atributos e Variáveis do SINAN}
+
+As variáveis selecionadas para a modelagem foram submetidas a um processo de limpeza e recodificação para garantir a compatibilidade com algoritmos de \textit{Machine Learning}. As principais categorias analíticas incluem:
+
+\begin{itemize}
+    \item \textbf{Aspectos Clínicos:} Classificação Operacional (`CLASSOPERA`), Baciloscopia (`BACILOSCOP`), Forma Clínica (`FORMACLINI`) e o número de lesões cutâneas (`NU\_LESOES`).
+    \item \textbf{Dano Neurológico:} Número de troncos nervosos afetados (`NERVOSAFET`) e a Avaliação do Grau de Incapacidade Física no diagnóstico (`AVALIA\_N`).
+    \item \textbf{Acompanhamento e Alta:} Esquema terapêutico inicial (`ESQ\_INI\_N`), doses recebidas (`DOSE\_RECEB`), contatos examinados (`CONTEXAM`) e o desfecho de alta (`TPALTA\_N`).
+    \item \textbf{Demografia:} Sexo (`CS\_SEXO`), Raça/Cor (`CS\_RACA`) e Grau de Escolaridade (`CS\_ESCOL\_N`).
+\end{itemize}
+
+A Tabela \ref{tab:variaveis_selecionadas} detalha a natureza e o papel de cada atributo no motor analítico.
+
+\begin{table}[H]
+\centering
+\caption{Definição e Natureza das Variáveis Selecionadas do SINAN}
+\label{tab:variaveis_selecionadas}
+\begin{tabular}{lll}
+\toprule
+Categoria & Variável & Descrição/Papel \\
+\midrule
+Clínica & CLASSOPERA & Classificação em PB ou MB (Preditivo GIF) \\
+Clínica & FORMACLINI & Forma clínica da doença (I, T, D, V) \\
+Clínica & NU\_LESOES & Quantidade de lesões cutâneas identificadas \\
+Dano Neural & NERVOSAFET & Contagem de troncos nervosos com espessamento \\
+Vigilância & DOSE\_RECEB & Adesão ao tratamento (Doses de PQT) \\
+Social & CS\_ESCOL\_N & Nível de escolaridade (Marcador de vulnerabilidade) \\
+Temporal & NU\_ANO & Ano da notificação (Análise pré/pós pandemia) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+O alvo primário dos modelos classificadores foi a presença de Incapacidade Física, especificamente o G2D, sinalizado no atributo `AVALIA\_N` ou derivado da carga de lesões e nervos quando os dados de avaliação formal estavam omissos.
+
+\section{Modelagem Preditiva com Balanceamento de Dados}
+
+Dada a natureza desbalanceada dos desfechos de incapacidade física (G2D), onde os casos graves representam uma minoria estatística, implementamos modelos de \textit{Gradient Boosting} (LightGBM e XGBoost) integrados à técnica SMOTE (\textit{Synthetic Minority Over-sampling Technique}). Esta abordagem permite superar o desafio de dados desbalanceados em agravos negligenciados, gerando amostras sintéticas da classe minoritária para equilibrar o aprendizado do modelo \cite{leveraging_xgboost_explainable, seltman2020exploratory}.
+
+O uso de algoritmos de \textit{boosting} justifica-se pela sua robustez em capturar dependências não-lineares em bases de dados de vigilância, enquanto o SMOTE mitiga o viés em direção à classe majoritária (G0/G1), garantindo que o sistema de saúde seja capaz de identificar os perfis de maior risco com maior sensibilidade.
+
+Para otimizar o desempenho preditivo sem comprometer o tempo computacional, implementamos um algoritmo de Otimização Bayesiana na busca de hiperparâmetros (\textit{Search Space}). Diferentemente de buscas estocásticas puras (\textit{Random Search}) ou exaustivas (\textit{Grid Search}), a Otimização Bayesiana constrói um modelo probabilístico do espaço de erro objetivo, convergindo de forma eficiente para configurações ideais em espaços de alta complexidade \cite{bergstra2012random, akiba2019optuna}. Foram executadas 100 iterações para a sintonia fina de cada arquitetura, focando na minimização do \textit{Mean Absolute Error} (MAE) e do \textit{Root Mean Squared Error} (RMSE) sob um esquema restrito de \textit{Walk-forward Validation}. A ancoragem nesta métrica e esquema de validação garante que o parâmetro escolhido é matematicamente robusto a variações dinâmicas temporais, e não apenas adaptado a um lote estático de pacientes \cite{tashman2000forecasting}.
+
+\section{Pré-processamento e Limpeza}
+
+Dada a natureza heterogênea do SINAN, implementamos uma rotina rigorosa de pré-processamento fundamentada na literatura de ciência de dados em saúde \cite{scikit_learn}:
+\begin{enumerate}
+    \item \textbf{Tratamento de Missing Values:} Variáveis com mais de 60\% de ausência foram descartadas. Para as variáveis clínicas remanescentes, utilizou-se a imputação baseada na moda para variáveis categóricas e na mediana para numéricas, preservando a distribuição original dos dados \cite{little2019missing}.
+    \item \textbf{Codificação Categórica:} Variáveis nominais foram submetidas ao \textit{One-Hot Encoding}, transformando categorias discretas em vetores binários expansíveis para o processamento algorítmico \cite{potdar2017categorical}.
+    \item \textbf{Remoção de Outliers:} Aplicou-se o critério do Intervalo Interquartil (IQR). Define-se $IQR = Q3 - Q1$, e os limites superior e inferior como $Q3 + 1.5 \times IQR$ e $Q1 - 1.5 \times IQR$, respectivamente. Esta técnica mitiga o impacto de registros espúrios sem descartar a variabilidade biológica real \cite{rousseeuw2011outliers}.
+    \item \textbf{Escalonamento:} Para Redes Neurais (GRU) e modelos baseados em distância, os dados foram normalizados via \textit{StandardScaler}. A transformação assegura que cada característica tenha média 0 e variância unitária, conforme a fórmula $z = (x - \mu) / s$, evitando que variáveis com grandes escalas numéricas dominem o aprendizado do modelo \cite{scikit_learn}.
+    \item \textbf{Balanceamento (SMOTE):} Implementou-se o \textit{Synthetic Minority Over-sampling Technique} (SMOTE) no conjunto de treino para lidar com o desbalanceamento de classes (G2D). O algoritmo cria instâncias sintéticas por interpolação linear entre vizinhos próximos da classe minoritaria, conforme proposto por \cite{smote_chawla}. \textbf{Nota crítica de reprodutibilidade:} o SMOTE foi aplicado \textit{exclusivamente sobre o conjunto de treinamento}, após a partição treino/teste com corte temporal. Aplicação anterior à divisão constituiria \textit{data leakage}: instâncias sintéticas derivadas de amostras de teste contaminariam o modelo e inflariam artificialmente todas as métricas de validação \cite{little2019missing}.
+\end{enumerate}
+
+\section{Design do Estudo de Séries Temporais}
+
+Para quantificar a subnotificação, a série temporal foi decomposta em níveis mensais de jan/2012 a dez/2024. O design do estudo utilizou o período de 2012-2019 como base de treinamento para estabelecer a trajetória histórica "normal" da endemia. 
+
+A Figura \ref{fig:design_estudo} ilustra a linha do tempo total e os marcos críticos: o início da pandemia (março/2020), o encerramento da emergência nacional no Brasil (abril/2022) e o fim da emergência internacional pela OMS (maio/2023). O período pandêmico foi utilizado para comparar as projeções dos modelos de \textit{forecasting} com as notificações reais observadas, permitindo o cálculo matemático do \textit{gap} de casos ocultos.
+
+\begin{figure}[H]
+\centering
+\caption{Design do Estudo: Série Histórica Total (2012-2024) e Marcos Pandêmicos}
+\label{fig:design_estudo}
+\includegraphics[width=\textwidth]{fig/design_estudo_timeline.png}
+\end{figure}

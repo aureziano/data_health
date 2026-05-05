@@ -1,0 +1,36 @@
+\chapter{Introdução}
+
+
+A hanseníase, doença infecciosa crônica causada pelo \textit{Mycobacterium leprae}, permanece como um dos desafios mais persistentes para a saúde pública no Brasil. O país ocupa a segunda posição mundial em número absoluto de casos, sendo superado apenas pela Índia \cite{who_hans_2021, boletim2025hanseniase}. Caracterizada por um longo período de incubação e pela predileção do bacilo pelas células de Schwann e epiderme, a patologia possui um potencial incapacitante singular, capaz de gerar deformidades físicas irreversíveis se não houver diagnóstico e tratamento precoces \cite{lepra_ref_pilar, nery2021physical}.
+
+O cenário epidemiológico brasileiro é marcado por profundas heterogeneidades regionais e determinantes sociais \cite{who_hans_2021}. Este contexto sofreu um choque exógeno sem precedentes com a emergência da pandemia de COVID-19 em 2020. A crise sanitária global não apenas interrompeu as cadeias de vigilância ativa, mas também obscureceu a verdadeira magnitude da endemia através de barreiras operacionais massivas nos serviços de Atenção Primária à Saúde (APS) \cite{sousa2025, chaves2022impact}.
+
+\section{Problemática e a "Pandemia Oculta"}
+
+Diferente de agravos respiratórios agudos, a hanseníase depende fundamentalmente do exame dermatoneurológico presencial para sua detecção oportuna. A identificação de manchas hipocrômicas e o palpar de nervos periféricos exigem proximidade física, algo que foi estritamente limitado pelas medidas de distanciamento social \cite{frade2022hidden}. Estudos de séries temporais interrompidas demonstram que a detecção de hanseníase sofreu uma redução imediata de aproximadamente 55\% no início da pandemia no Brasil \cite{sousa2025}.
+
+Observa-se, portanto, um "paradoxo de gravidade": enquanto as taxas de detecção gerais despencaram, a proporção de pacientes diagnosticados já com Grau 2 de Incapacidade Física (G2D) apresentou um aumento relativo \cite{boletim2025hanseniase, impact_minas_2025}. Este dado é um marcador sentinela de falha operacional, indicando que o sistema de saúde tornou-se reativo, identificando majoritariamente indivíduos que já apresentam sequelas visíveis e incapacitantes \cite{freitas2025evaluating}.
+
+Sob a ótica da Ciência da Computação e Informática em Saúde, este problema pode ser formalizado como \textbf{estimação de um sinal epidemiológico corrompido por ruído sistêmico}: a série temporal de notificações de hanseníase representa um sinal de interesse que sofreu uma perturbação exógena de grande amplitude — a pandemia de COVID-19 — que corrompeu sua dinâmica observável. Técnicas de aprendizado de máquina e análise de séries temporais são naturalmente adequadas para decompor este fenômeno: modelos ARIMA capturam a autocorrelação temporal da endemia; redes GRU utilizam memória adaptativa para modelar dependências de longo prazo; e algoritmos de \textit{gradient boosting} identificam padrões não-lineares de risco em espaços de alta dimensionalidade. Juntos, formam um \textit{framework} de inteligência computacional aplicada à vigilância epidemiológica de precisão.
+
+\section{Objetivos da Pesquisa}
+
+A presente pesquisa propõe o desenvolvimento de um \textit{framework} de Vigilância de Precisão (\textit{Precision Public Health}), utilizando Inteligência Artificial para mitigar os impactos da subnotificação e predizer o risco de incapacidade física. Em contraste com políticas populacionais uniformes, a \textit{Precision Public Health} aplica métodos computacionais de análise de dados de alta resolução para otimizar a alocação de intervenções no nível territorial \cite{who_hans_2021} — transformando dados epidemiológicos brutos em informação acionável para o gestor de saúde.
+
+\subsection{Objetivo Geral}
+
+Desenvolver, validar e interpretar modelos de \textit{Machine Learning} e análise de séries temporais para a predição do risco de Grau 2 de Incapacidade Física em pacientes com hanseníase, quantificando o impacto da subnotificação pandêmica no território brasileiro.
+
+\subsection{Objetivos Específicos}
+
+\begin{itemize}
+    \item \textbf{Exploração Multinível e Ancoragem Social:} Analisar a correlação entre variáveis clínicas do SINAN e indicadores sociodemográficos do IBGE, identificando os principais direcionadores de risco para o G2D com base em métricas de importância de variáveis \cite{freitas2025evaluating, clinical_variables_northeast}.
+    \item \textbf{Descoberta de Fenótipos Epidemiológicos:} Aplicar algoritmos de redução de dimensionalidade (UMAP) e clusterização otimizada para identificar perfis de vulnerabilidade extrema ao diagnóstico tardio \cite{mcinnes2018umap, becht2018dimensionality}.
+    \item \textbf{Modelagem Preditiva com Balanceamento de Dados:} Implementar modelos de \textit{Gradient Boosting} (LightGBM e XGBoost) integrados à técnica SMOTE (\textit{Synthetic Minority Over-sampling Technique}) para superar o desafio de dados desbalanceados em agravos negligenciados \cite{leveraging_xgboost_explainable, seltman2020exploratory}.
+    \item \textbf{Quantificação da Demanda Reprimida:} Estimar a subnotificação acumulada no período 2020-2022 através de modelos de séries temporais (ARIMA e GRU), estabelecendo o \textit{counterfactual} (cenário esperado sem a pandemia) versus o observado \cite{shahidi2021forecasting, sousa2024predicting}.
+    \item \textbf{Explicabilidade Algorítmica em Saúde:} Utilizar \textit{SHAP Values} para decompor as decisões dos modelos, garantindo que as predições sejam interpretáveis por gestores de saúde pública para ações de busca ativa guiada \cite{leveraging_xgboost_explainable}.
+\end{itemize}
+
+\section{Justificativa e Relevância}
+
+A detecção de G2D em menores de 15 anos ou em áreas de baixa endemicidade denota transmissão ativa e falha no exame de contatos \cite{boletim2025hanseniase}. A reversão desse cenário exige ferramentas tecnológicas que otimizem a reabilitação física e a busca ativa precoce. Esta dissertação justifica-se pela necessidade de transladar o conhecimento de IA para o fortalecimento da Estratégia "Zero Hanseníase" (2021-2030) da OMS \cite{who_hans_2021}, fornecendo um método escalável para identificar onde a endemia oculta está mais presente.

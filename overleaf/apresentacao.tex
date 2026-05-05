@@ -1,0 +1,283 @@
+\documentclass[10pt, aspectratio=169]{beamer}
+
+% Configurações de Tema e Cores
+\usetheme{Madrid}
+\usecolortheme{beaver} % Esquema de cores vermelho/cinza (sóbrio para saúde)
+\usefonttheme{professionalfonts}
+
+% Pacotes Adicionais
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage{booktabs} % Para tabelas bonitas
+\usepackage{graphicx}
+\usepackage{natbib}
+\usepackage{hyperref}
+\usepackage{ragged2e} % Para justificar texto
+
+% Configuração de Bibliografia no Beamer
+\setbeamertemplate{bibliography item}{\insertbiblabel}
+
+% Metadados
+\title{Aprendizado de Máquina na Vigilância de Precisão da Hanseníase no Brasil}
+\subtitle{Modelagem de Subnotificação Pandêmica, Reabsorção de Backlog e Explicabilidade SHAP}
+\author{Aureziano Faria de Oliveira}
+\institute[UFES]{Programa de Pós-Graduação em Informática \\ Universidade Federal do Espírito Santo (UFES)}
+\date{Defesa de Dissertação --- 2026}
+
+\begin{document}
+
+% Slide de Título
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% Sumário
+\begin{frame}{Roteiro da Apresentação}
+    \tableofcontents
+\end{frame}
+
+% ============================================================================
+% CAPÍTULO 1: INTRODUÇÃO
+% ============================================================================
+\section{Introdução e Motivação}
+
+\begin{frame}{O Cenário da Hanseníase no Brasil}
+    \begin{columns}
+        \column{0.6\textwidth}
+        \begin{itemize}
+            \item \textbf{Carga da Doença:} Brasil como 2º país com maior número de casos novos no mundo.
+            \item \textbf{O Problema:} Diagnóstico tardio correlacionado ao Grau 2 de Incapacidade Física (G2D).
+            \item \textbf{Impacto da Pandemia:} Interrupção da busca ativa e vigilância, gerando uma "Pandemia Oculta" \citep{who_hans_2021}.
+            \item \textbf{Backlog:} Acúmulo de casos não detectados (2020-2022) que agora pressionam o sistema de saúde \citep{dahbeer2022impact}.
+        \end{itemize}
+        
+        \column{0.4\textwidth}
+        \begin{alertblock}{Risco de Subnotificação}
+            A queda aparente na incidência mascara o aumento da gravidade real e a demanda reprimida.
+        \end{alertblock}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Objetivos da Pesquisa}
+    \textbf{Objetivo Geral:} Analisar o impacto da pandemia e desenvolver modelos preditivos de risco.
+    \vspace{0.5cm}
+    \begin{enumerate}
+        \item \textbf{Quantificar o "Apagão":} Usar séries temporais para medir o gap de notificação (2020-2024).
+        \item \textbf{Avaliar Qualidade de Dados:} Medir o impacto de dados ausentes no SINAN (ex: Baciloscopia).
+        \item \textbf{Modelagem Preditiva:} Comparar Random Forest, XGBoost e LightGBM na predição de G2D.
+        \item \textbf{Mitigação de Viés:} Aplicar técnicas de balanceamento (SMOTE) para detectar a classe minoritária (casos graves).
+    \end{enumerate}
+\end{frame}
+
+% ============================================================================
+% CAPÍTULO 2: DADOS E EDA
+% ============================================================================
+\section{Preparação dos Dados e Análise Exploratória}
+
+\begin{frame}{Caracterização do Dataset (SINAN)}
+    \begin{itemize}
+        \item \textbf{Volume de Dados:} $N = 998.214$ notificações (2001--2024).
+        \item \textbf{Pré-processamento:}
+            \begin{itemize}
+                \item Remoção de colunas constantes (\texttt{TP\_NOT}, \texttt{ID\_AGRAVO}).
+                \item Discretização da idade (Foco em $<15$ anos).
+            \end{itemize}
+        \item \textbf{Desafio dos Dados Ausentes (Missing Values):}
+    \end{itemize}
+    
+    \begin{table}
+        \centering
+        \begin{tabular}{lcc}
+            \toprule
+            \textbf{Variável Crítica} & \textbf{\% Ausente/Ignorado} & \textbf{Impacto Clínico} \\ \midrule
+            Baciloscopia (\texttt{BACILOSCOP}) & \textbf{50,47\%} & Classificação Operacional \\
+            Nervos Afetados (\texttt{NERVOSAFET}) & \textbf{47,29\%} & Predição de Incapacidade \\ \bottomrule
+        \end{tabular}
+        \caption{Qualidade dos dados brutos identificada na EDA.}
+    \end{table}
+\end{frame}
+
+\begin{frame}{Dinâmica Temporal e a Subnotificação Pandêmica}
+    \begin{columns}
+        \column{0.6\textwidth}
+        \begin{center}
+            \includegraphics[width=\textwidth]{fig/comparativo_focado_ts.png}
+        \end{center}
+        
+        \column{0.4\textwidth}
+        \begin{itemize}
+            \item \textbf{Gap Acumulado:} Identificamos uma perda de \textbf{33,56\%} no volume de detecções (2020-2022).
+            \item \textbf{Recuperação (2023-2024):} Evidência clara de reabsorção de \textit{backlog} (supernotificação compensatória).
+            \item \textbf{Conclusão:} O sistema está detectando o "passivo" gerado na pandemia.
+        \end{itemize}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Evolução Clínica: Matriz de Transição de Incapacidade}
+    \begin{columns}
+        \column{0.6\textwidth}
+        \begin{center}
+            \includegraphics[width=0.9\textwidth]{fig/matriz_transicao_gif.png}
+        \end{center}
+        
+        \column{0.4\textwidth}
+        \begin{itemize}
+            \item \textbf{Inércia Clínica:} Observa-se que pacientes com Grau 2 no diagnóstico tendem a permanecer com deformidade.
+            \item \textbf{Estabilidade (Diagonal):} A maioria dos pacientes fura o ciclo de reabilitação.
+            \item \textbf{Impacto:} Reforça a necessidade do diagnóstico precoce.
+        \end{itemize}
+    \end{columns}
+\end{frame}
+
+% ============================================================================
+% CAPÍTULO 3: METODOLOGIA
+% ============================================================================
+\section{Estratégia de Modelagem}
+
+\begin{frame}{Divisão Temporal e Validação Walk-forward}
+    Diferente da validação cruzada tradicional (K-Fold), adotamos o rigor da \textbf{Validação Walk-forward}:
+    
+    \begin{columns}
+        \column{0.5\textwidth}
+        \begin{center}
+            \includegraphics[width=0.9\textwidth]{fig/comparativo_metodos_validacao.png}
+        \end{center}
+        
+        \column{0.5\textwidth}
+        \begin{itemize}
+            \item \textbf{Motivação:} Evita o \textit{data leakage} (vazamento de dados do futuro para o passado).
+            \item \textbf{Realismo:} Simula a expansão do conhecimento clínico conforme o tempo progride.
+            \item \textbf{Baseline:} Dados pré-2020.
+            \item \textbf{Teste:} Enfrentamento da ruptura pandêmica.
+        \end{itemize}
+    \end{columns}
+\end{frame}
+
+% ============================================================================
+% CAPÍTULO 4: RESULTADOS
+% ============================================================================
+\section{Resultados e Discussão}
+
+\begin{frame}{Performance do Modelo (LightGBM + SMOTE)}
+    O LightGBM destacou-se pela eficiência com dados tabulares esparsos e desbalanceados.
+
+    \begin{table}[ht]
+    \centering
+    \footnotesize
+    \begin{tabular}{|l|c|c|c|c|}
+    \hline
+    \textbf{Métrica} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-Score} & \textbf{AUC-ROC} \\ \hline
+    Baixo Risco (G0) & 0.99 & 0.99 & 0.99 & \multirow{2}{*}{\textbf{0.93}} \\ \cline{1-4}
+    \textbf{Alto Risco (G2D)} & \textbf{0.86} & \textbf{0.84} & \textbf{0.85} & \\ \hline
+    \end{tabular}
+    \caption{Métricas finais validadas no cenário pós-pandemia.}
+    \end{table}
+    
+    \begin{itemize}
+        \item \textbf{Alta Sensibilidade:} Fundamental para não ignorar pacientes que necessitam de intervenção imediata.
+        \item \textbf{Robustez:} Manutenção da performance mesmo em dados com alta taxa de valores omissos.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Análise de Erros: Matriz de Confusão}
+    \begin{columns}
+        \column{0.5\textwidth}
+        \textbf{Instrução para Figura 3:}
+        \begin{itemize}
+            \item \textit{Inserir a Matriz de Confusão do melhor modelo (LightGBM).}
+            \item \textit{Destacar o quadrante dos Verdadeiros Positivos para G2D.}
+        \end{itemize}
+        % \includegraphics[width=\textwidth]{figuras/confusion_matrix_lightgbm.png}
+        
+        \column{0.5\textwidth}
+        \begin{itemize}
+            \item O modelo acertou 83\% dos casos graves.
+            \item A "sujeira" nos dados (missing values) foi mitigada pela robustez do algoritmo de Gradient Boosting.
+        \end{itemize}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Justificativa da Rigidez Algorítmica}
+    A escolha por UMAP e K=2 baseou-se em métricas de estabilidade e separabilidade:
+    
+    \begin{columns}
+        \column{0.5\textwidth}
+        \begin{center}
+            \includegraphics[width=0.9\textwidth]{fig/comparativo_projecoes.png}
+            \caption{UMAP preserva melhor a topologia clínica.}
+        \end{center}
+        
+        \column{0.5\textwidth}
+        \begin{center}
+            \includegraphics[width=0.9\textwidth]{fig/otimizacao_silhouette.png}
+            \caption{Silhouette Profile valida K=2 como ideal.}
+        \end{center}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Explicabilidade Global: Ranking de Importância (SHAP)}
+    Além da visão individual (Waterfall), o modelo permite entender o comportamento sistêmico:
+    
+    \begin{columns}
+        \column{0.6\textwidth}
+        \begin{center}
+            \includegraphics[width=\textwidth]{fig/shap_bar_global.png}
+        \end{center}
+        
+        \column{0.4\textwidth}
+        \begin{itemize}
+            \item \textbf{Doses Recebidas:} Variável de maior impacto (proxie de adesão e tempo de tratamento).
+            \item \textbf{Classificação Operacional:} MB vs PB define a probabilidade base de G2D.
+            \item \textbf{Interpretabilidade:} O modelo não é uma caixa-preta; ele espelha diretrizes clínicas.
+        \end{itemize}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Perfís Clínicos via Clustering (UMAP + K-Means)}
+    A clusterização revelou dois fenótipos populacionais distintos ($K=2$, Silhueta 0.69):
+    
+    \begin{columns}
+        \column{0.55\textwidth}
+        \begin{center}
+            \includegraphics[width=0.9\textwidth]{fig/justificativa_alta_gravidade.png}
+        \end{center}
+        
+        \column{0.45\textwidth}
+        \begin{itemize}
+            \item \textbf{Cluster 1 (Baixa Gravidade):} Diagnóstico precoce, maioria G0 (92,5\%).
+            \item \textbf{Cluster 2 (Alta Gravidade):} Concentração massiva de \textbf{G2D (65,4\%)} e Multibacilares.
+            \item \textbf{Utilidade:} Priorização de recursos para microrregiões no Cluster 2.
+        \end{itemize}
+    \end{columns}
+\end{frame}
+
+% ============================================================================
+% CAPÍTULO 5: CONCLUSÃO
+% ============================================================================
+\section{Conclusão}
+
+\begin{frame}{Conclusões e Impacto}
+    \begin{alertblock}{O Passivo Oculto}
+        A pandemia gerou um "apagão" seletivo. A análise de discrepância (Previsto vs. Observado) sugere que muitos casos G2D deixaram de ser notificados ou foram diagnosticados tardiamente.
+    \end{alertblock}
+
+    \begin{block}{Recomendação Tecnológica}
+        \begin{itemize}
+            \item O \textbf{LightGBM com SMOTE} provou ser viável para triagem em larga escala no SUS.
+            \item Capacidade de lidar com dados incompletos (Baciloscopia ausente) é essencial para a realidade da Atenção Primária.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+% ============================================================================
+% REFERÊNCIAS
+% ============================================================================
+\section{Referências}
+
+\begin{frame}[allowframebreaks]{Referências Bibliográficas}
+    \tiny
+    \bibliographystyle{plainnat}
+    \bibliography{referencias_dis} 
+\end{frame}
+
+\end{document}

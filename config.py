@@ -13,10 +13,35 @@ BASE_PATH = Path('.')
 DATA_PATH = BASE_PATH / 'data'
 RESULTS_PATH = BASE_PATH / 'results'
 
+def _get_latest_hanseniase(data_path: Path) -> Path:
+    """Retorna o arquivo HANSENIASE_TOTAL_*.csv mais recente em data/HANSENIASE/."""
+    from datetime import datetime
+    hanseniase_dir = data_path / 'HANSENIASE'
+    candidatos = list(hanseniase_dir.glob('HANSENIASE_TOTAL_*.csv'))
+    if not candidatos:
+        raise FileNotFoundError(
+            f"Nenhum arquivo HANSENIASE_TOTAL_*.csv encontrado em {hanseniase_dir}\n"
+            "Execute: python -m convert_dbc"
+        )
+    
+    def extrair_data(p):
+        try:
+            # Pega dd_mm_yyyy do nome do arquivo
+            parts = p.stem.split('_')
+            date_str = f"{parts[-3]}_{parts[-2]}_{parts[-1]}"
+            return datetime.strptime(date_str, '%d_%m_%Y')
+        except:
+            return datetime.min
+
+    candidatos.sort(key=extrair_data, reverse=True)
+    arquivo = candidatos[0]
+    print(f"[config] Arquivo de hanseníase detectado: {arquivo.name}")
+    return arquivo
+
 # --- Caminhos dos Arquivos de Entrada ---
 PATHS = {
     'populacao': DATA_PATH / 'IBGE' / 'populacao_municipios.csv',
-    'hanceniase': DATA_PATH / 'HANSENIASE' / 'HANSENIASE_TOTAL_28_02_2025.csv',
+    'hanceniase': _get_latest_hanseniase(DATA_PATH),
     'antt': DATA_PATH / 'MOBILIDADE' / 'dados_rodoviarios_ibge.csv',
     'ibge_2016': DATA_PATH / 'MOBILIDADE' / 'dados_rodoviarias_hidroviarias_2016.csv',
     'anac': DATA_PATH / 'MOBILIDADE' / 'dados_aereos_consolidados.csv',

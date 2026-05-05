@@ -2,9 +2,9 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.feature_selection import SelectKBest, f_classif, RFE
+from sklearn.feature_selection import SelectKBest, f_classif, RFE, mutual_info_classif, SelectFromModel
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import LogisticRegression, LassoCV
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import classification_report
 import os
@@ -26,7 +26,7 @@ df_y = pd.read_csv("./tratamento/alvo_tratado.csv")
 print("Dados tratados carregados com sucesso.")
 
 # 2. Carregamento dos dados brutos para obter colunas de data/hora
-caminho_arquivo = r"./data/HANS/HANSENIASE_TOTAL_26_11_2025.csv"
+caminho_arquivo = rstr(config.PATHS['hanceniase'])
 try:
     df_bruto = pd.read_csv(caminho_arquivo, encoding="utf-8", low_memory=False)
     print("Dados brutos carregados com sucesso.")
@@ -61,20 +61,40 @@ selected_features = df_X.columns[selector.support_].tolist()
 print("RFE concluído.")
 
 # b) Seleção por f_classif (univariate)
-print("Aplicando seleção univariada...")
+print("Aplicando seleção univariada (f_classif)...")
 selector_uni = SelectKBest(f_classif, k=10)
 selector_uni.fit(X, y)
 selected_features_uni = df_X.columns[selector_uni.get_support()].tolist()
 print("Seleção univariada concluída.")
 
-# 7. Relatório de seleção
-with open(f"{dir_relatorios}/selecao_features.txt", "w", encoding="utf-8") as f:
-    f.write("Features selecionadas por RFE:\n")
-    f.write("\n".join(selected_features))
-    f.write("\n\nFeatures selecionadas por f_classif:\n")
-    f.write("\n".join(selected_features_uni))
+# c) Mutual Information (Captura relações não lineares)
+print("Aplicando Mutual Information...")
+selector_mi = SelectKBest(mutual_info_classif, k=10)
+selector_mi.fit(X, y)
+selected_features_mi = df_X.columns[selector_mi.get_support()].tolist()
 
-print("Relatório de seleção de features salvo.")
+# d) LASSO (Regularização L1)
+print("Aplicando LASSO para Feature Selection (Regularização em Saúde)...")
+lasso = LogisticRegression(penalty='l1', solver='liblinear', C=0.1, random_state=42)
+selector_lasso = SelectFromModel(lasso)
+selector_lasso.fit(X, y)
+selected_features_lasso = df_X.columns[selector_lasso.get_support()].tolist()
+
+# 7. Relatório de seleção
+with open(f"{dir_relatorios}/selecao_features_dissertacao.txt", "w", encoding="utf-8") as f:
+    f.write("RELATÓRIO DE AVALIAÇÃO DE FEATURES PARA DISSERTAÇÃO DE MESTRADO\n")
+    f.write("===============================================================\n\n")
+    f.write("A seleção de atributos desempenha papel crucial preditivo em prontuários eletrônicos de saúde.\n")
+    f.write("Features selecionadas por RFE (Random Forest) - (Modelagem Não-Linear Robusta):\n")
+    f.write("\n".join(selected_features))
+    f.write("\n\nFeatures selecionadas por f_classif (Teste Estatístico Linear ANOVA):\n")
+    f.write("\n".join(selected_features_uni))
+    f.write("\n\nFeatures selecionadas por Mutual Information (Captura dependência não-linear complexa - ref: Vergara et al. 2014):\n")
+    f.write("\n".join(selected_features_mi))
+    f.write("\n\nFeatures selecionadas por LASSO / L1 (Redução de Coeficientes Esparsos para explicabilidade clínica - ref: Tibshirani 1996):\n")
+    f.write("\n".join(selected_features_lasso))
+
+print("Relatório de seleção de features expandido para dissertação salvo.")
 
 # 8. Propensity Score Matching (PSM) - para subpopulações
 # Exemplo: comparar pacientes pré e durante pandemia

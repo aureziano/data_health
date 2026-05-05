@@ -1,0 +1,152 @@
+\chapter{Resultados: Modelagem Preditiva e Séries Temporais}
+
+
+Este capítulo detalha a aplicação de algoritmos de aprendizado supervisionado para a predição de risco e a modelagem de séries temporais para a estimativa da subnotificação pandêmica.
+
+\section{Desempenho dos Modelos e Tuning de Hiperparâmetros}
+
+Para lidar com o severo desbalanceamento de classes inerente aos dados de Grau 2 de Incapacidade (G2D), aplicamos a técnica \textit{Synthetic Minority Over-sampling Technique} (SMOTE). O SMOTE atua gerando exemplos sintéticos da classe minoritária através da interpolação de vizinhos próximos, evitando o \textit{overfitting} comum em simples duplicação de dados \cite{chawla2002smote}.
+
+A arquitetura escolhida foi o LightGBM, um framework de \textit{Gradient Boosting} que utiliza crescimento de árvores orientado por folhas (\textit{leaf-wise}), otimizando o consumo de memória e a velocidade de convergência em grandes volumes de dados de saúde \cite{ke2017lightgbm}.
+
+\begin{table}[H]
+\centering
+\caption{Ranking de Importância das Variáveis (SHAP Values)}
+\label{tab:shap_importance}
+\small
+\input{tabs/tabela_importancia_shap.tex}
+\end{table}
+
+A Tabela \ref{tab:shap_importance} detalha quantitativamente a contribuição de cada variável para o modelo. Observa-se que indicadores clínicos como o número de nervos afetados e a classificação operacional exercem o maior peso, validando a hipótese de que a gravidade clínica é o principal direcionador das decisões do algoritmo. Deve-se atentar também para a nomenclatura das variáveis dicotomizadas via \textit{One-Hot Encoding} (e.g., sufixos como \texttt{\_7} em atributos de alta). No dicionário de dados do SINAN, estes sufixos categóricos traduzem subcondições específicas (por exemplo, "Alta por Abandono" ou "Óbito"), permitindo que a árvore de decisão capture o impacto não-linear estrito de cada subcondição no aumento da probabilidade funcional \cite{scikitlearn_MI_2024}.
+
+\begin{table}[H]
+\centering
+\caption{Configuração Ótima de Hiperparâmetros e Resultados de Classificação (LightGBM)}
+\label{tab:hiperparametros_resultados}
+\input{tabs/resultados_modelagem.tex}
+
+\vspace{0.3cm}
+\begin{minipage}{\textwidth}
+\footnotesize \textbf{Nota técnica sobre o Espaço de Busca (Search Space):} Os parâmetros selecionados (\texttt{num\_leaves} e \texttt{learning\_rate}) regulam o crítico \textit{trade-off} viés-variância do modelo. O hiperparâmetro \texttt{num\_leaves} (configurado em 64) controla o crescimento limite de nós folha (\textit{leaf-wise}): valores superiores elevam artificialmente a acurácia no treinamento, porém expõem o preditor a severo risco de \textit{overfitting}. Simultaneamente, o \texttt{learning\_rate} (estabelecido em 0.05) modula o passo vetorial na descida do gradiente, propiciando um trajeto de convergência algorítmica suavizado e resiliente aos vales subótimos de perda temporal.
+\end{minipage}
+\end{table}
+
+\section{Explicabilidade via SHAP Values}
+
+Dada a natureza crítica da área de saúde, a explicabilidade do modelo é tão importante quanto sua acurácia. Utilizamos os \textit{SHAP Values} para decompor as previsões individuais. A Figura \ref{fig:shap_lgbm} apresenta a decomposição da decisão para um caso típico de "Alto Risco".
+
+Diferente de métricas globais, o gráfico de \textit{Waterfall} permite observar como cada atributo do paciente (como doses recebidas e classificação operacional) contribuiu numericamente para elevar a probabilidade de Grau 2 de Incapacidade (G2D) acima da base média do modelo. Observou-se que o atributo "Doses Recebidas" (DOSE\_RECEB) foi o principal direcionador de risco em casos críticos, onde a interrupção do tratamento atua como um fator multiplicador de sequelas neurológicas \cite{delayed_diagnosis_northeast}.
+
+\begin{figure}[H]
+\centering
+\caption{Explicabilidade do Modelo via SHAP Values (Caso de Alto Risco)}
+\label{fig:shap_lgbm}
+\begin{subfigure}{0.88\textwidth}
+    \includegraphics[width=\textwidth]{fig/shap_waterfall.png}
+    \caption{Decomposição Individual de Risco (\textit{Waterfall Plot})}
+\end{subfigure}
+\vspace{0.3cm}
+\begin{subfigure}{0.75\textwidth}
+    \includegraphics[width=\textwidth]{fig/shap_bar_global.png}
+    \caption{Importância Global das Variáveis (\textit{Bar Plot})}
+\end{subfigure}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\caption{Distribuição Global do Impacto das Variáveis \textit{(Beeswarm Summary Plot)}}
+\label{fig:shap_beeswarm}
+\includegraphics[width=0.9\textwidth]{fig/shap_beeswarm.png}
+\end{figure}
+
+O \textit{Beeswarm Plot} (Fig.~\ref{fig:shap_beeswarm}) complementa a visão individual do \textit{Waterfall}, revelando a distribuição do impacto de \texttt{DOSE\_RECEB} sobre toda a população de teste. Cada ponto representa um paciente; a cor indica o valor da variável (vermelho = alto, azul = baixo); a posição horizontal reflete o impacto no risco de G2D. Pacientes com poucas doses recebidas (azul) concentram-se no lado positivo do eixo SHAP, confirmando que a interrupção terapêutica é um fator de risco \textbf{consistente e generalizável} — não apenas um fenômeno observado em casos individuais.
+
+Para complementar a análise visual, a Tabela \ref{tab:contribuicao_shap} detalha a contribuição média das variáveis de maior impacto. O valor SHAP positivo indica uma propensão aumentada para o Grau 2 de Incapacidade Física (G2D).
+
+\begin{table}[H]
+\centering
+\caption{Contribuição das Variáveis (Valores SHAP Médios)}
+\label{tab:contribuicao_shap}
+\begin{tabular}{llr}
+\toprule
+Atributo & Descrição & Impacto (SHAP) \\
+\midrule
+DOSE\_RECEB & Adesão ao tratamento (PQT) & +0.245 \\
+CLASSOPERA & Classificação Multibacilar (MB) & +0.182 \\
+CS\_SEXO\_M & Paciente do sexo masculino & +0.095 \\
+NU\_LESOES & Carga bacilar (Nº de Lesões) & +0.064 \\
+NU\_ANO & Efeito temporal (Acesso reduzido) & +0.032 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Análise de Séries Temporais e Subnotificação}
+
+Para quantificar o impacto da pandemia de COVID-19, utilizamos uma comparação multimodelo de alta abrangência (e não um ensemble meta-aprendiz), elegendo o cenário contrafactual predito por diferentes lentes algorítmicas de forma independente: Naive (Seasonal Baseline), SARIMA, Holt-Winters, Prophet e XGBoost.
+
+A Tabela \ref{tab:metricas_full} apresenta o desempenho de acurácia no período pré-pandemia. Optou-se por focar nas métricas absolutas (MAE e RMSE). Embora o erro relativo MAPE (\textit{Mean Absolute Percentage Error}) seja altamente valioso em cenários da Informática para medir consistência de escala, a extrema volatilidade mensal nos estados de menor densidade populacional inflava o MAPE assintoticamente, justificando a adoção prioritária do Erro Absoluto para o embasamento da saúde pública no Brasil. A estimativa quantifica o \textit{gap} acumulado englobando tanto o déficit quanto a resposta tardia.
+
+\begin{table}[H]
+\centering
+\caption{Comparativo Multimodelo e Estimativa de Subnotificação (Pandemia 2020-2022 vs. Recuperação 2023-2024)}
+\label{tab:metricas_full}
+\resizebox{\textwidth}{!}{%
+\input{tabs/tabela_comparativo_modelos_full.tex}
+}
+\end{table}
+
+A análise revela que os modelos SARIMA e XGBoost apresentaram a maior precisão preditiva (menores erros). O SARIMA estimou uma subnotificação de aproximadamente 43.415 casos (diferença de $-33{,}56\%$ em relação ao esperado), enquanto o Prophet, com uma tendência mais agressiva, projetou uma perda de até 61.883 diagnósticos ($-47{,}84\%$).
+
+A divergência de $\sim$18.000 casos entre estas duas estimativas reflete diferenças estruturais de modelagem: o SARIMA descreve tendências como \textbf{localmente lineares e estacionárias}, tornando-o conservador diante de recuperações não-lineares pós-choque. O Prophet, por sua vez, utiliza uma função de tendência \textit{piecewise} (por etapas) com detecção automática de \textit{changepoints}, capturando de forma mais sensível a aceleração de detecção observada em 2022-2023. O intervalo {[}43k, 61k{]} deve, portanto, ser interpretado como a \textbf{faixa de incerteza epistêmica} do \textit{gap} real — ambas as estimativas são válidas dentro de seus arcabouços; o valor verídico provavelmente reside no interior desse intervalo.
+
+\subsection{Projeção Focada e Recuperação da Vigilância}
+
+A Figura \ref{fig:foco_ts} apresenta uma visão detalhada da dinâmica de notificações, contrastando o período de restrições severas com a fase de retomada dos serviços de saúde.
+
+\begin{figure}[H]
+\centering
+\caption{Dinâmica de Gaps Epidemiológicos: Subnotificação vs. Recuperação do Backlog (2019-2024)}
+\label{fig:foco_ts}
+\includegraphics[width=\textwidth]{fig/comparativo_focado_ts.png}
+\end{figure}
+
+A análise exploratória e preditiva, consolidada na Figura \ref{fig:foco_ts}, evidencia dois estágios epidemiológicos distintos que definem o cenário atual da hanseníase no Brasil:
+
+\begin{enumerate}
+    \item \textbf{Estágio I: A Pandemia Oculta (2020-2022)} - Caracterizado por um "Gap Negativo" (sombreamento em vermelho), onde observou-se uma queda de 33,56\% na detecção de casos novos. Este declínio absoluto não reflete uma redução real da carga da doença, mas sim o colapso da busca ativa e a conversão de unidades de atenção básica em centros de triagem para COVID-19 \cite{sousa2024predicting}. Internacionalmente, este fenômeno foi reportado em grandes países endêmicos como Índia e Indonésia, com quedas variando entre 37\% e 50\% na detecção \cite{who_hans_2021}.
+    
+    \item \textbf{Estágio II: A Reabsorção de Backlog (2023-2024)} - Caracterizado por um "Gap Positivo" (sombreamento em verde/ciano). Neste período, as notificações reais tendem a superar as projeções contrafatuais (cenário sem pandemia), revelando a absorção dos casos represados nos anos anteriores. Conforme as diretrizes da \textit{Global Leprosy Strategy 2021-2030}, este teto de supernotificação era esperado e representa o esforço do sistema de saúde em diagnosticar o passivo acumulado (\textit{leprosy backlog}), embora o custo desse atraso seja o aumento de casos com incapacidades físicas graves no momento da detecção \cite{dahbeer2022impact}.
+\end{enumerate}
+
+Esta transição do Gap Negativo para o Positivo indica que o Brasil iniciou um ciclo de recuperação diagnóstica, mas a magnitude da subnotificação acumulada sugere que a vigilância precisará operar em regime de alta intensidade até o final da década para mitigar as sequelas da interrupção pandêmica.
+
+\section{O Paradoxo da Gravidade Pandêmica: Efeitos da Subnotificação}
+
+Para consubstanciar a análise do Estágio II (Reabsorção de Backlog), investigamos a hipótese do \textit{Paradoxo de Gravidade Pandêmica} \cite{mello2022paradox}, o qual postula que o represamento de casos no sistema de saúde devido à COVID-19 gerou não apenas um déficit absoluto, mas um aumento proporcional de diagnósticos tardios e gravidade clínica.
+
+A evolução percentual da gravidade evidencia esta deterioração. Conforme ilustrado pela Figura \ref{fig:paradoxo_grav}, enquanto a detecção total sofreu o "Gap Negativo", a proporção de pacientes diagnosticados já com deficiência irreversível (Grau 2 ou G2D) disparou. 
+
+\begin{figure}[h!tbp]
+\centering
+\caption{Evolução Percentual da Gravidade da Hanseníase (Paradoxo Pandêmico)}
+\label{fig:paradoxo_grav}
+\includegraphics[width=\textwidth]{fig/paradoxo_gravidade_stacked.png}
+\end{figure}
+
+Para validar formalmente essa inflexão, aplicou-se um modelo de \textit{Interrupted Time Series} (ITS) centrado na taxa de G2D ao longo do tempo. O modelo confirma estatisticamente o ponto de ruptura:
+
+\begin{table}[H]
+\centering
+\caption{Interrupted Time Series (ITS) OLS Model - Taxa de G2D}
+\label{tab:its_results}
+\input{tabs/paradoxo_its.tex}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Tracking da Falsa Cura e Gap Positivo (Pós-Pandemia)}
+\label{tab:falsa_cura}
+\input{tabs/paradoxo_falsa_cura.tex}
+\end{table}
+
+As evidências numéricas corroboram que o aumento de volume observado entre 2023-2024 ("Gap Positivo") não decorre de maior incidência orgânica, mas primariamente do represamento de casos crônicos que adentraram o serviço de saúde tardiamente. Adicionalmente, na fase de recuperação (Pós-Pandemia), nota-se um viés de \textit{Falsa Cura}, uma vez que a queda drástica na realização das avaliações físicas durante a alta mascara as taxas reais de incapacidade residual, conforme demonstrado no levantamento amostral da Tabela \ref{tab:falsa_cura} \cite{romao_alta_2023, silva_cura_2024}.

@@ -1,0 +1,76 @@
+\chapter{Determinantes Socio-Clínicos da Capacidade Física (2001-2024)}
+\label{Appendix:Incapacidade_SocioClinica}
+
+Este capítulo detalha as associações entre o Grau de Incapacidade Física (GIF) e variáveis sociais e clínicas, fornecendo uma base interpretativa para os desfechos de saúde observados na série temporal.
+
+\section{Qualidade dos Dados e Validade das Associações}
+
+A análise de tendências exige cautela devido às variações na completude do SINAN. A Tabela \ref{tab:qualidade_v3} demonstra que, embora o diagnóstico seja quase universalmente avaliado (>95\%), a avaliação na alta (cura) apresenta declínio, especialmente no período pandêmico e pós-pandêmico.
+
+\begin{table}[h!]
+    \centering
+    \caption{Completude das Avaliações de GIF no SINAN}
+    \begin{tabular}{lccc}
+        \toprule
+        \textbf{Período} & \textbf{Total Casos} & \textbf{Completude Cura (\%)} & \textbf{Análise Evolutiva (\%)} \\ 
+        \midrule
+        2001-2010 & 513.504 & 80,4\% & 51,7\% \\
+        2011-2020 & 359.384 & 68,9\% & 54,2\% \\
+        2021-2024 & 88.445  & 40,8\% & 35,9\% \\
+        \bottomrule
+    \end{tabular}
+    \label{tab:qualidade_v3}
+\end{table}
+
+\section{Determinantes Sociais e Evolução Clínica}
+
+As desigualdades sociais refletem-se diretamente na gravidade do diagnóstico e no desfecho clínico. A Figura \ref{fig:painel_socio} apresenta o cruzamento da taxa de melhora com sexo, idade e escolaridade.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig/incapacidade/painel_socio_clinico.png}
+    \caption{Taxa de Melhora Clínica por Determinantes Sociais (2018-2022).}
+    \label{fig:painel_socio}
+\end{figure}
+
+\begin{description}
+    \item[Sexo:] Observa-se que pacientes do sexo masculino apresentam uma taxa de melhora de aproximadamente 18,5\% contra 16,5\% no sexo feminino. Contudo, a literatura indica que homens tendem a ser diagnosticados mais tardiamente, carregando maior carga de incapacidade inicial e, portanto, maior "janela" para melhora estatística se o tratamento for adequado \parencite{boigny2019}.
+    \item[Faixa Etária:] A melhora clínica é progressivamente superior em adultos (17,8\%) e idosos (20,1\%) em comparação a crianças (10,6\%). Isso ocorre porque a incidência de incapacidades físicas graves (Grau I e II) é raramente observada na população pediátrica, onde o diagnóstico costuma ocorrer com GIF 0 \parencite{lanza2015}.
+    \item[Escolaridade:] Paradoxalmente, pacientes analfabetos apresentaram taxas de melhora superiores (21,5\%). Essa observação reforça a hipótese de diagnóstico tardio em populações vulneráveis: como chegam com graus elevados de incapacidade, qualquer resposta terapêutica é capturada como melhora. Em contraste, populações com ensino superior apresentam maior proporção de Grau 0 no início, mantendo-se estáveis.
+\end{description}
+
+\section{Dinâmica Clínica e Classificação Operacional}
+
+A Classificação Operacional (PB/MB) é o principal preditor clínico de dano neural. Casos Multibacilares (MB) possuem maior carga bacilar e risco de reações hansênicas.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.85\textwidth]{fig/incapacidade/tendencia_por_classe.png}
+    \caption{Evolução do Grau Médio de Incapacidade por Categoria Clínica.}
+    \label{fig:stats_classe}
+\end{figure}
+
+A Figura \ref{fig:stats_classe} demonstra que o GIF médio em casos MB é sistematicamente superior e apresenta maior variabilidade. A taxa de melhora em casos MB é significativamente superior (19,9\%) em comparação aos casos PB (8,1\%), refletindo a maior propensão de casos MB a apresentarem algum grau de dano reversível durante a poliquimioterapia de 12 meses.
+
+\section{Análise Espacial por Microrregiões}
+
+A distribuição geográfica da melhora clínica revela disparidades na rede de assistência. O mapeamento por microrregiões (Figura \ref{fig:mapa_v3_micro}) permite observar que estados com alta endemicidade, como Mato Grosso e Maranhão, possuem microrregiões com resultados distintos, sugerindo que a eficácia do tratamento é dependente da estrutura local de saúde e não apenas de políticas estaduais.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.9\textwidth]{fig/incapacidade/mapa_microrregioes_v3.png}
+    \caption{Taxa de Melhora do GIF por Microrregião (Pares Válidos 2018-2022).}
+    \label{fig:mapa_v3_micro}
+\end{figure}
+
+\section{Referências Acadêmicas}
+
+\begin{itemize}
+    \item \textbf{BOIGNY, R. N. et al.} Evolution of physical disabilities in Hansen’s disease: a longitudinal study of 10 years in a Brazilian municipality. \textit{Revista da Sociedade Brasileira de Medicina Tropical}, v. 52, 2019.
+    \item \textbf{KERR, L. et al.} Leprosy in Brazil: a disease that persists as a public health problem. \textit{Cadernos de Saúde Pública}, v. 35, n. 4, 2019.
+    \item \textbf{LANZA, F. M. et al.} Grau de incapacidade física na hanseníase: análise seccional de 2014 no Brasil. \textit{Epidemiologia e Serviços de Saúde}, v. 24, n. 3, 2015.
+    \item \textbf{MINISTÉRIO DA SAÚDE.} Guia Prático sobre a Hanseníase. Brasília: Ministério da Saúde, 2017.
+    \item \textbf{WHO.} Global leprosy (Hansen disease) update, 2021: moving towards interruption of transmission. \textit{Weekly Epidemiological Record}, 2022.
+\end{itemize}
+
+\FloatBarrier

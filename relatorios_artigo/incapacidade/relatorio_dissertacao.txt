@@ -1,0 +1,11 @@
+RELATÓRIO PARA A DISSERTAÇÃO DE MESTRADO (METODOLOGIA E RESULTADOS)
+=================================================================
+
+1. Justificativa do uso de UMAP e K-Means:
+Na área da saúde populacional (Epidemiologia), métodos como K-Means e algoritmos de aproximação por variedade uniforme (UMAP) têm sido largamente úteis na descoberta de subtipos fenotípicos latentes (referências: Becht et al. 2018; McInnes et al. 2018). Para descrever o atraso geográfico, a desigualdade IBGE versus a incidência do 'Grau de Incapacidade Físico', reduzimos a dimensionalidade sociodemográfica com UMAP, encontrando grupos não-lineares.
+
+2. Características dos Grupos Descobertos:
+- Cluster 0: Média Indade: 4041.38, Incapacidade: 0.23, Lesões: 4.16
+- Cluster 1: Média Indade: 4045.99, Incapacidade: 2.55, Lesões: 6.79
+- Cluster 2: Média Indade: 2286.51, Incapacidade: 0.41, Lesões: 2.72
+- Cluster 3: Média Indade: 4042.11, Incapacidade: 0.30, Lesões: 6.49
